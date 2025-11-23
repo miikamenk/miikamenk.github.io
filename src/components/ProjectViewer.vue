@@ -47,6 +47,7 @@ const projects = ref<Project[]>(
     }
 
     return {
+      id: filenameFromPath(filePath),
       title: meta.title ?? meta.name ?? 'Untitled',
       thumbnail: thumbnailUrl || fallbackSvg,
       text: html,
@@ -127,15 +128,15 @@ function setViewName(el: Element | null, name: string | null) {
     <div v-if="selectedProject" class="modal">
       <div class="modal-content">
         <button class="close-btn" @click="closeProject">✕</button>
-        <h2>{{ selectedProject.title }}</h2>
-        <p class="date">Uploaded: {{ selectedProject.uploadDate }}</p>
+        <h2>{{ selectedProject!.title }}</h2>
+        <p class="date">Uploaded: {{ selectedProject!.uploadDate }}</p>
         <img
           class="modal-img"
-          :src="selectedProject.thumbnail"
-          :data-project-id="selectedProject.id"
+          :src="selectedProject!.thumbnail"
+          :data-project-id="selectedProject!.id"
           @error="(e) => ((e.target as HTMLImageElement).src = fallbackSvg)"
         />
-        <p class="text" v-html="selectedProject.text"></p>
+        <p class="text" v-html="selectedProject!.text"></p>
       </div>
     </div>
   </section>
