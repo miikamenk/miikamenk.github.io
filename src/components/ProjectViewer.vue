@@ -1,11 +1,20 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { Buffer } from 'buffer'
+;(globalThis as any).Buffer = Buffer
 
-// Import all project JSON files
-const projectFiles = import.meta.glob('../projects/*.json', { eager: true })
+import { ref } from 'vue'
+import matter from 'gray-matter'
+import { marked } from 'marked'
+
+const projectFiles = import.meta.glob('../projects/*.md', {
+  eager: true,
+  query: '?raw',
+  import: 'default',
+})
 const imageFiles = import.meta.glob('../projects/images/*', { eager: true, import: 'default' })
+
 // fallback svg image
-const fallbackSvg = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 640'><path fill='%2374C0FC' d='M160 96C124.7 96 96 124.7 96 160L96 480C96 515.3 124.7 544 160 544L480 544C515.3 544 544 515.3 544 480L544 160C544 124.7 515.3 96 480 96L160 96zM224 176C250.5 176 272 197.5 272 224C272 250.5 250.5 272 224 272C197.5 272 176 250.5 176 224C176 197.5 197.5 176 224 176zM368 288C376.4 288 384.1 292.4 388.5 299.5L476.5 443.5C481 450.9 481.2 460.2 477 467.8C472.8 475.4 464.7 480 456 480L184 480C175.1 480 166.8 475 162.7 467.1C158.6 459.2 159.2 449.6 164.3 442.3L220.3 362.3C224.8 355.9 232.1 352.1 240 352.1C247.9 352.1 255.2 355.9 259.7 362.3L286.1 400.1L347.5 299.6C351.9 292.5 359.6 288.1 368 288.1z'/></svg>`
+const fallbackSvg = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600' preserveAspectRatio='xMidYMid meet'><defs><linearGradient id='g' x1='0' x2='1'><stop offset='0' stop-color='%237fb7ff'/><stop offset='1' stop-color='%238fb8d9'/></linearGradient></defs><rect width='100%' height='100%' rx='18' fill='url(%23g)'/><g transform='translate(120,100)' fill='none' stroke='%23ffffff' stroke-width='12' stroke-linecap='round' stroke-linejoin='round'><rect x='40' y='30' width='520' height='360' rx='20' opacity='0.18' fill='none' stroke='%23ffffff'/><circle cx='300' cy='210' r='70' opacity='0.2' fill='none' stroke='%23ffffff'/><path d='M80 80 L140 80 L170 40 L200 80 L260 80' opacity='0.12' stroke='%23ffffff'/></g><text x='50%' y='92%' font-family='system-ui, -apple-system, "Segoe UI", Roboto' font-size='18' fill='rgba(255,255,255,0.9)' text-anchor='middle'>No image available</text></svg>`
 
 type Project = {
   title: string
@@ -14,29 +23,83 @@ type Project = {
   uploadDate: string
 }
 
-const projects = ref<Project[]>(
-  Object.values(projectFiles).map((data: any) => {
-    const project = data.default
+const filenameFromPath = (path: string) => path.split('/').pop()!
 
-    // If the thumbnail path matches an imported image, replace it with the actual URL
-    for (const [path, img] of Object.entries(imageFiles)) {
-      if (path.endsWith(project.thumbnail.split('/').pop()!)) {
-        project.thumbnail = img as string
+const projects = ref<Project[]>(
+  Object.entries(projectFiles).map(([filePath, moduleExport]) => {
+    const raw = moduleExport as unknown as string
+
+    const parsed = matter(raw)
+    const meta = parsed.data || {}
+    const markdown = parsed.content || ''
+    const html = marked(markdown)
+
+    let thumbnailUrl = meta.thumbnail ?? ''
+    if (thumbnailUrl) {
+      const wantedName = (thumbnailUrl as string).split('/').pop()!
+      for (const [imgPath, imgModule] of Object.entries(imageFiles)) {
+        if (filenameFromPath(imgPath) === wantedName) {
+          thumbnailUrl = imgModule as unknown as string
+          break
+        }
       }
     }
 
-    return project
+    return {
+      title: meta.title ?? meta.name ?? 'Untitled',
+      thumbnail: thumbnailUrl || fallbackSvg,
+      text: html,
+      uploadDate: meta.uploadDate ?? meta.date ?? '',
+    } as Project
   }),
 )
 
 const selectedProject = ref<Project | null>(null)
 
-function openProject(project: Project) {
-  selectedProject.value = project
+function openProject(project: Project, evt?: MouseEvent) {
+  const cardEl =
+    (evt?.currentTarget as Element | null) ??
+    document.querySelector(`[data-project-card="${project.id}"]`)
+  const thumbEl = cardEl?.querySelector('img') ?? null
+
+  const vtName = `thumb-${project.id}`
+  setViewName(thumbEl, vtName)
+
+  const doUpdate = () => {
+    selectedProject.value = project
+  }
+
+  if (document.startViewTransition) {
+    document.startViewTransition(() => doUpdate())
+  } else {
+    doUpdate()
+  }
 }
 
 function closeProject() {
-  selectedProject.value = null
+  const project = selectedProject.value
+  const modalImg = document.querySelector(`.modal-img[data-project-id="${project.id}"]`)
+  const gridImg = document.querySelector(`[data-project-card="${project.id}"] img`)
+  const vtName = `thumb-${project.id}`
+  setViewName(modalImg, vtName)
+  if (document.startViewTransition) {
+    document.startViewTransition(() => {
+      selectedProject.value = null
+    })
+  } else {
+    selectedProject.value = null
+  }
+  setTimeout(() => {
+    setViewName(modalImg, null)
+    setViewName(gridImg, null)
+  }, 300)
+}
+
+function setViewName(el: Element | null, name: string | null) {
+  if (!el) return
+  const style = (el as HTMLElement).style
+  if (name === null) style.removeProperty('view-transition-name')
+  else style.setProperty('view-transition-name', name)
 }
 </script>
 
@@ -48,7 +111,8 @@ function closeProject() {
         v-for="(project, i) in projects"
         :key="i"
         class="project-card"
-        @click="openProject(project)"
+        @click="(e) => openProject(project, e)"
+        :data-project-card="project.id"
       >
         <img
           :src="project.thumbnail"
@@ -67,7 +131,8 @@ function closeProject() {
         <img
           class="modal-img"
           :src="selectedProject.thumbnail"
-          @error="(e) => ((e.target as HTMLImageElement).style.display = 'none')"
+          :data-project-id="selectedProject.id"
+          @error="(e) => ((e.target as HTMLImageElement).src = fallbackSvg)"
         />
         <p class="text" v-html="selectedProject.text"></p>
       </div>
@@ -210,5 +275,28 @@ function closeProject() {
   .grid {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   }
+}
+.title-stack {
+  position: relative;
+}
+
+.title-normal,
+.title-fancy {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
+}
+
+.modal .title-normal {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+.modal .title-fancy {
+  opacity: 1;
+  transform: translateY(0);
 }
 </style>

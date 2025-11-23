@@ -9,12 +9,11 @@ import ContactForm from '../components/ContactForm.vue'
 </template>
 
 <style>
-@media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+.about {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding-top: 80px;
+  justify-content: center;
 }
 </style>

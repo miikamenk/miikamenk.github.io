@@ -24,8 +24,15 @@ function onEdit() {
   <div class="home">
     <div class="terminal-wrapper">
       <div class="vim-controls">
-        <button class="render-btn" @click="onRender" v-if="!renderedHtml">Render</button>
-        <button class="render-btn" @click="onEdit" v-else>Back</button>
+        <button
+          class="render-btn"
+          :class="{ jump: !renderedHtml }"
+          @click="onRender"
+          v-if="!renderedHtml"
+        >
+          Render
+        </button>
+        <button class="render-btn" @click="onEdit" v-else>Edit</button>
       </div>
 
       <VimEmulator v-show="!renderedHtml" ref="vimRef" />
@@ -40,13 +47,12 @@ function onEdit() {
 </template>
 
 <style>
-@media (min-width: 1024px) {
-  .home {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+.home {
+  min-height: 100vh;
+  display: flex;
+  padding-top: 130px;
+  align-items: center;
+  justify-content: center;
 }
 .rendered-terminal {
   width: 85vw;
@@ -78,6 +84,22 @@ function onEdit() {
   pointer-events: auto;
 }
 
+@keyframes jump {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(-6px);
+  }
+  50% {
+    transform: translateY(0);
+  }
+  75% {
+    transform: translateY(-3px);
+  }
+}
+
 .render-btn {
   pointer-events: auto; /* allow clicks on the button itself */
   background: rgba(17, 24, 39, 0.85); /* glassy dark */
@@ -96,9 +118,13 @@ function onEdit() {
     opacity 160ms;
   opacity: 0.95;
 }
+.render-btn.jump {
+  animation: jump 1s infinite;
+}
+
 .render-btn:hover {
-  transform: translateY(-3px);
-  filter: brightness(1.08);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  transform: scale(1.05);
 }
 .render-btn:active {
   transform: translateY(-1px) scale(0.995);

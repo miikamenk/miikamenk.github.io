@@ -12,6 +12,12 @@ const MESSAGE = `<div class="card">
   </p><br/>
 
   <p>
+    I'm always building something. I have too many projects, mostly designing electronics, 3D
+    modeling and printing, making open source programs that I find useful or a fun challenge to
+    make.
+  </p><br/>
+
+  <p>
     I’m really into Linux, Vim, and bleeding-edge tooling.
   </p><br/>
 
@@ -19,6 +25,17 @@ const MESSAGE = `<div class="card">
     Advocate for open-source software and hardware.
     Try out this interactive Vim terminal I built and explore the rest of my site!
   </p>
+  <div class="social-buttons">
+    <a href="https://github.com/miikamenk" target="_blank" aria-label="GitHub">
+      <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" alt="GitHub"/>
+    </a>
+    <a href="https://www.linkedin.com/in/miika-ritokangas/" target="_blank" aria-label="LinkedIn">
+      <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/linkedin.svg" alt="LinkedIn"/>
+    </a>
+    <a href="mailto:miikamenk@duck.com" target="_blank" aria-label="Email">
+    <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/gmail.svg" alt="Email"/>
+    </a>
+  </div>
 </div>
 
 <style>
@@ -29,6 +46,26 @@ const MESSAGE = `<div class="card">
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
   animation: fadeInUp 0.6s ease;
 }
+
+.social-buttons {
+  margin-top: 2rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.social-buttons a img {
+  width: 32px;
+  height: 32px;
+  filter: brightness(0.2) invert(0.7);
+  transition: all 0.2s ease;
+}
+
+.social-buttons a img:hover {
+  filter: brightness(1) invert(0);
+  transform: scale(1.1);
+}
+
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
