@@ -59,6 +59,7 @@ const projects = ref<Project[]>(
 const selectedProject = ref<Project | null>(null)
 
 function openProject(project: Project, evt?: MouseEvent) {
+  if (!project) return
   const cardEl =
     (evt?.currentTarget as Element | null) ??
     document.querySelector(`[data-project-card="${project.id}"]`)
@@ -80,6 +81,8 @@ function openProject(project: Project, evt?: MouseEvent) {
 
 function closeProject() {
   const project = selectedProject.value
+  if (!project) return
+
   const modalImg = document.querySelector(`.modal-img[data-project-id="${project.id}"]`)
   const gridImg = document.querySelector(`[data-project-card="${project.id}"] img`)
   const vtName = `thumb-${project.id}`
