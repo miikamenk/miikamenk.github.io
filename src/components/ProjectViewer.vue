@@ -130,7 +130,27 @@ function setViewName(el: Element | null, name: string | null) {
 
 <template>
   <section class="projects">
-    <div class="projects-header"></div>
+    <div class="projects-header">
+      <button class="sort-btn" @click="sortOrder = sortOrder === 'newest' ? 'oldest' : 'newest'">
+        <span>{{ sortOrder === 'newest' ? 'Newest' : 'Oldest' }}</span>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          :class="{ rotated: sortOrder === 'oldest' }"
+          class="icon-arrow"
+        >
+          <path d="M12 5v14" />
+          <path d="m19 12-7 7-7-7" />
+        </svg>
+      </button>
+    </div>
 
     <div class="grid">
       <div
@@ -162,7 +182,7 @@ function setViewName(el: Element | null, name: string | null) {
         <p class="date">Uploaded: {{ selectedProject!.uploadDate }}</p>
 
         <img
-          v-if="selectedProject!.thumbnail"
+          v-if="selectedProject!.thumbnail && selectedProject!.thumbnail !== fallbackSvg"
           class="modal-img"
           :src="selectedProject!.thumbnail"
           :style="{ viewTransitionName: `thumb-${selectedProject!.id}` }"
@@ -183,9 +203,23 @@ function setViewName(el: Element | null, name: string | null) {
   box-sizing: border-box;
 }
 
+.sort-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-background-soft);
+  border: 1px solid var(--color-border, #ddd);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--color-text);
+  transition: all 0.2s;
+}
+
 .projects-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   margin-bottom: 1.5rem;
   flex-wrap: wrap;
