@@ -4,7 +4,7 @@ import { onMounted, onBeforeUnmount, ref, computed, nextTick, watch } from 'vue'
 //config
 const MESSAGE = `<div class="card">
   <h1>Hi, I'm miikamenk</h1>
-  <h2>Full-Stack Software Developer</h2><br/>
+  <h3>Full-Stack Software Developer</h3><br/>
 
   <p>
     Passionate about all kinds of tech especially building custom electronics,
@@ -429,6 +429,7 @@ onBeforeUnmount(() => {
 /* style was made mostly by chatgpt */
 .vim-wrap {
   display: grid;
+  width: 100%;
   gap: 0.75rem;
   place-items: center;
 }

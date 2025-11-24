@@ -53,11 +53,10 @@ function onEdit() {
   /* Reduced padding-top, relying on flex center */
   align-items: center;
   justify-content: center;
-  padding-top: calc(124px + 2em);
+  padding-top: calc(130px + 2.5em);
 }
 .rendered-terminal {
   width: 85vw;
-  height: 50vh;
   color: #d1fae5;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
@@ -73,28 +72,17 @@ function onEdit() {
   max-width: 1200px;
 }
 
-.rendered-terminal,
-.terminal-wrapper .vim-wrap {
-  /* Align VimEmulator wrapper size */
-  width: 100%; /* Make it responsive up to max-width */
-  /* Removed fixed color/font here as it's better defined on the content */
-  /* Remove these: color: #d1fae5; font-family: ...; */
-  overflow: auto;
-  padding: 1rem; /* Added padding for rendered content */
-}
-
 .vim-controls {
   position: absolute;
-  /* CHANGE: Use a relative unit (em) for the vertical offset */
-  top: -2em;
-  right: 0.5rem;
+  top: -2.5rem;
+  right: 0;
   left: unset;
   transform: none;
+  padding-right: 0.75rem;
   width: auto;
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
-  padding: 0;
   pointer-events: auto;
   z-index: 30;
 }
