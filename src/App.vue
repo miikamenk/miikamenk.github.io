@@ -52,8 +52,6 @@ header {
 
 .content {
   margin: 0 auto;
-  padding: 2rem;
-  padding-top: calc(2rem + 80px);
   box-sizing: border-box;
 }
 

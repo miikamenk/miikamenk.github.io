@@ -51,10 +51,9 @@ function onEdit() {
   min-height: 100vh;
   display: flex;
   /* Reduced padding-top, relying on flex center */
-  /* padding-top: 130px; */
   align-items: center;
   justify-content: center;
-  padding: 2rem 1rem; /* Add padding for small screens */
+  padding-top: calc(124px + 2em);
 }
 .rendered-terminal {
   width: 85vw;
@@ -78,7 +77,6 @@ function onEdit() {
 .terminal-wrapper .vim-wrap {
   /* Align VimEmulator wrapper size */
   width: 100%; /* Make it responsive up to max-width */
-  height: 50vh;
   /* Removed fixed color/font here as it's better defined on the content */
   /* Remove these: color: #d1fae5; font-family: ...; */
   overflow: auto;
@@ -88,7 +86,7 @@ function onEdit() {
 .vim-controls {
   position: absolute;
   /* CHANGE: Use a relative unit (em) for the vertical offset */
-  top: -2.5em;
+  top: -2em;
   right: 0.5rem;
   left: unset;
   transform: none;
@@ -149,11 +147,5 @@ function onEdit() {
 }
 .render-btn:active {
   transform: translateY(-1px) scale(0.995);
-}
-@media (max-width: 600px) {
-  .rendered-terminal,
-  .terminal-wrapper .vim-wrap {
-    height: 65vh; /* Taller on mobile */
-  }
 }
 </style>

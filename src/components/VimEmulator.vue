@@ -434,7 +434,7 @@ onBeforeUnmount(() => {
 }
 .vim-window {
   width: 100%;
-  height: 100%;
+  height: 60vh;
   min-height: 300px;
   border-radius: 0.75rem;
   overflow: hidden;
