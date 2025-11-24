@@ -67,6 +67,7 @@ const sortedProjects = computed(() => {
   })
 })
 const selectedProject = ref<Project | null>(null)
+const fullscreenImage = ref<string | null>(null)
 
 function openProject(project: Project, evt?: MouseEvent) {
   if (!project) return
@@ -120,6 +121,14 @@ function closeProject() {
   }, 300)
 }
 
+function openFullscreenImage(src: string) {
+  fullscreenImage.value = src
+}
+
+function closeFullscreenImage() {
+  fullscreenImage.value = null
+}
+
 function setViewName(el: Element | null, name: string | null) {
   if (!el) return
   const style = (el as HTMLElement).style
@@ -170,7 +179,12 @@ function setViewName(el: Element | null, name: string | null) {
     </div>
 
     <div v-if="selectedProject" class="modal">
-      <button class="close-btn" @click="closeProject" style="view-transition-name: close-button">
+      <button
+        class="close-btn"
+        v-if="!fullscreenImage"
+        @click="closeProject"
+        style="view-transition-name: close-button"
+      >
         ✕
       </button>
 
@@ -186,9 +200,15 @@ function setViewName(el: Element | null, name: string | null) {
           class="modal-img"
           :src="selectedProject!.thumbnail"
           :style="{ viewTransitionName: `thumb-${selectedProject!.id}` }"
+          @click="openFullscreenImage(selectedProject!.thumbnail)"
         />
 
         <p class="text" v-html="selectedProject!.text"></p>
+      </div>
+
+      <div v-if="fullscreenImage" class="fullscreen-viewer" @click.self="closeFullscreenImage">
+        <button class="fs-close-btn" @click="closeFullscreenImage">✕</button>
+        <img :src="fullscreenImage" class="fs-img" alt="Fullscreen Project Image" />
       </div>
     </div>
   </section>
@@ -397,5 +417,47 @@ function setViewName(el: Element | null, name: string | null) {
 h2,
 h3 {
   width: fit-content;
+}
+
+.fullscreen-viewer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.9); /* Dark, slightly transparent background */
+  z-index: 1000; /* Ensure it's above everything, including the project modal */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer; /* Suggests clicking background closes it */
+}
+
+.fs-img {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain; /* Ensures the image fits within bounds without cropping */
+  transition: transform 0.3s ease;
+}
+
+.fs-close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 2rem;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 1001; /* Above the image */
+  padding: 10px;
+  line-height: 1;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.fs-close-btn:hover {
+  opacity: 1;
 }
 </style>
