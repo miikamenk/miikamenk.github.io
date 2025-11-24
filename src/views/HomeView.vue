@@ -56,7 +56,6 @@ function onEdit() {
   padding-top: calc(130px + 2.5em);
 }
 .rendered-terminal {
-  width: 85vw;
   color: #d1fae5;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
