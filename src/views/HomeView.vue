@@ -50,9 +50,11 @@ function onEdit() {
 .home {
   min-height: 100vh;
   display: flex;
-  padding-top: 130px;
+  /* Reduced padding-top, relying on flex center */
+  /* padding-top: 130px; */
   align-items: center;
   justify-content: center;
+  padding: 2rem 1rem; /* Add padding for small screens */
 }
 .rendered-terminal {
   width: 85vw;
@@ -62,21 +64,40 @@ function onEdit() {
 }
 
 .terminal-wrapper {
-  position: relative; /* makes .vim-controls absolute inside it */
+  height: 100%;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem; /* optional: spacing between button and terminal */
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.rendered-terminal,
+.terminal-wrapper .vim-wrap {
+  /* Align VimEmulator wrapper size */
+  width: 100%; /* Make it responsive up to max-width */
+  height: 50vh;
+  /* Removed fixed color/font here as it's better defined on the content */
+  /* Remove these: color: #d1fae5; font-family: ...; */
+  overflow: auto;
+  padding: 1rem; /* Added padding for rendered content */
 }
 
 .vim-controls {
   position: absolute;
-  bottom: 100%; /* place above terminal */
-  left: 97%; /* horizontally centered */
-  transform: translateX(-50%) translateY(-0.5rem); /* small lift */
+  /* CHANGE: Use a relative unit (em) for the vertical offset */
+  top: -2.5em;
+  right: 0.5rem;
+  left: unset;
+  transform: none;
+  width: auto;
   display: flex;
-  gap: 0.5rem;
-  pointer-events: none;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 0;
+  pointer-events: auto;
   z-index: 30;
 }
 
@@ -110,13 +131,13 @@ function onEdit() {
   font:
     13px ui-monospace,
     monospace;
-  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.5);
+  box-shadow: 0 4px 112px rgba(2, 6, 23, 0.3);
   cursor: pointer;
   transition:
     transform 160ms ease,
     filter 160ms ease,
     opacity 160ms;
-  opacity: 0.95;
+  opacity: 1;
 }
 .render-btn.jump {
   animation: jump 1s infinite;
@@ -124,9 +145,15 @@ function onEdit() {
 
 .render-btn:hover {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-  transform: scale(1.05);
+  transform: scale(1.02);
 }
 .render-btn:active {
   transform: translateY(-1px) scale(0.995);
+}
+@media (max-width: 600px) {
+  .rendered-terminal,
+  .terminal-wrapper .vim-wrap {
+    height: 65vh; /* Taller on mobile */
+  }
 }
 </style>

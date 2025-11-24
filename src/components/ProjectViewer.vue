@@ -2,7 +2,7 @@
 import { Buffer } from 'buffer'
 ;(globalThis as any).Buffer = Buffer
 
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import matter from 'gray-matter'
 import { marked } from 'marked'
 
@@ -49,13 +49,23 @@ const projects = ref<Project[]>(
     return {
       id: filenameFromPath(filePath),
       title: meta.title ?? meta.name ?? 'Untitled',
-      thumbnail: thumbnailUrl || fallbackSvg,
+      // CHANGE: Don't default to fallbackSvg here, leave it empty if missing
+      thumbnail: thumbnailUrl,
       text: html,
       uploadDate: meta.uploadDate ?? meta.date ?? '',
     } as Project
   }),
 )
 
+const sortOrder = ref<'newest' | 'oldest'>('newest')
+
+const sortedProjects = computed(() => {
+  return [...projects.value].sort((a, b) => {
+    const dateA = new Date(a.uploadDate).getTime() || 0
+    const dateB = new Date(b.uploadDate).getTime() || 0
+    return sortOrder.value === 'newest' ? dateB - dateA : dateA - dateB
+  })
+})
 const selectedProject = ref<Project | null>(null)
 
 function openProject(project: Project, evt?: MouseEvent) {
@@ -63,10 +73,16 @@ function openProject(project: Project, evt?: MouseEvent) {
   const cardEl =
     (evt?.currentTarget as Element | null) ??
     document.querySelector(`[data-project-card="${project.id}"]`)
-  const thumbEl = cardEl?.querySelector('img') ?? null
 
-  const vtName = `thumb-${project.id}`
-  setViewName(thumbEl, vtName)
+  const thumbEl = cardEl?.querySelector('img') ?? null
+  const titleEl = cardEl?.querySelector('h3') ?? null
+
+  // 1. Tag the specific elements
+  setViewName(thumbEl, `thumb-${project.id}`)
+  setViewName(titleEl, `title-${project.id}`)
+
+  // 2. Tag the Card Background to morph into the Modal Background
+  setViewName(cardEl, `card-bg-${project.id}`)
 
   const doUpdate = () => {
     selectedProject.value = project
@@ -83,10 +99,12 @@ function closeProject() {
   const project = selectedProject.value
   if (!project) return
 
-  const modalImg = document.querySelector(`.modal-img[data-project-id="${project.id}"]`)
   const gridImg = document.querySelector(`[data-project-card="${project.id}"] img`)
-  const vtName = `thumb-${project.id}`
-  setViewName(modalImg, vtName)
+  const gridTitle = document.querySelector(`[data-project-card="${project.id}"] h3`)
+
+  setViewName(gridImg, `thumb-${project.id}`)
+  setViewName(gridTitle, `title-${project.id}`)
+
   if (document.startViewTransition) {
     document.startViewTransition(() => {
       selectedProject.value = null
@@ -94,9 +112,11 @@ function closeProject() {
   } else {
     selectedProject.value = null
   }
+
+  // Cleanup styles after transition
   setTimeout(() => {
-    setViewName(modalImg, null)
     setViewName(gridImg, null)
+    setViewName(gridTitle, null)
   }, 300)
 }
 
@@ -110,17 +130,18 @@ function setViewName(el: Element | null, name: string | null) {
 
 <template>
   <section class="projects">
-    <h2 class="section-title">Projects</h2>
+    <div class="projects-header"></div>
+
     <div class="grid">
       <div
-        v-for="(project, i) in projects"
-        :key="i"
+        v-for="(project, i) in sortedProjects"
+        :key="project.id"
         class="project-card"
         @click="(e) => openProject(project, e)"
         :data-project-card="project.id"
       >
         <img
-          :src="project.thumbnail"
+          :src="project.thumbnail || fallbackSvg"
           :alt="project.title"
           @error="(e) => ((e.target as HTMLImageElement).src = fallbackSvg)"
         />
@@ -129,16 +150,24 @@ function setViewName(el: Element | null, name: string | null) {
     </div>
 
     <div v-if="selectedProject" class="modal">
-      <div class="modal-content">
-        <button class="close-btn" @click="closeProject">✕</button>
-        <h2>{{ selectedProject!.title }}</h2>
+      <button class="close-btn" @click="closeProject" style="view-transition-name: close-button">
+        ✕
+      </button>
+
+      <div class="modal-content" :style="{ viewTransitionName: `card-bg-${selectedProject!.id}` }">
+        <h2 :style="{ viewTransitionName: `title-${selectedProject!.id}` }">
+          {{ selectedProject!.title }}
+        </h2>
+
         <p class="date">Uploaded: {{ selectedProject!.uploadDate }}</p>
+
         <img
+          v-if="selectedProject!.thumbnail"
           class="modal-img"
           :src="selectedProject!.thumbnail"
-          :data-project-id="selectedProject!.id"
-          @error="(e) => ((e.target as HTMLImageElement).src = fallbackSvg)"
+          :style="{ viewTransitionName: `thumb-${selectedProject!.id}` }"
         />
+
         <p class="text" v-html="selectedProject!.text"></p>
       </div>
     </div>
@@ -154,11 +183,20 @@ function setViewName(el: Element | null, name: string | null) {
   box-sizing: border-box;
 }
 
+.projects-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
 .section-title {
   font-size: 2rem;
   font-weight: 700;
-  margin-bottom: 1.5rem;
-  text-align: center;
+  margin-bottom: 0;
+  text-align: left;
 }
 
 .grid {
@@ -169,10 +207,42 @@ function setViewName(el: Element | null, name: string | null) {
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
 
+@media (min-width: 769px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
 @media (max-width: 768px) {
   .grid {
     grid-template-columns: 1fr;
   }
+}
+
+.sort-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-background-soft);
+  border: 1px solid var(--color-border, #ddd);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--color-text);
+  transition: all 0.2s;
+}
+
+.sort-btn:hover {
+  background: var(--color-border, #ccc);
+}
+
+.icon-arrow {
+  transition: transform 0.3s ease;
+}
+
+.rotated {
+  transform: rotate(180deg);
 }
 
 .project-card {
@@ -196,53 +266,54 @@ function setViewName(el: Element | null, name: string | null) {
   width: 100%;
   height: 160px;
   object-fit: cover;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
 }
 
 .project-card h3 {
   padding: 0.75rem;
-  text-align: center;
   font-size: 1.2rem;
+  width: fit-content;
+  margin: 0 auto;
+  text-align: center;
 }
 
-/* Modal */
 .modal {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.65);
-  display: flex;
-  justify-content: center;
-  align-items: center;
   z-index: 2000;
-  animation: fadeIn 0.3s ease;
+  overflow-y: auto;
+  padding: 2rem 1rem;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(5px);
 }
 
 .modal-content {
   background: var(--color-background);
-  padding: 2rem;
-  border-radius: 12px;
-  max-width: 700px;
-  width: 90%;
+  width: 100%;
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
   position: relative;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.3s ease;
 }
 
-.close-btn {
-  position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: var(--color-text);
+.modal-content h2 {
+  font-size: 2rem;
+  line-height: 1.2;
+  margin: 0 0 1rem 0;
+  width: fit-content;
 }
 
 .modal-img {
-  width: 100%;
-  height: auto;
-  margin: 1rem 0;
+  width: auto;
+  max-width: 100%;
+  max-height: 70vh;
+  display: block;
+  margin: 1.5rem 0;
   border-radius: 8px;
+  object-fit: contain;
 }
 
 .date {
@@ -256,52 +327,41 @@ function setViewName(el: Element | null, name: string | null) {
   line-height: 1.5;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+.close-btn {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  z-index: 2005;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: #333;
+  transform: none;
+}
+</style>
+
+<style>
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.5s; /* Smooth speed */
 }
 
-@keyframes slideUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+::view-transition-group(*),
+::view-transition-old(*),
+::view-transition-new(*) {
+  mix-blend-mode: normal;
 }
 
-@media (min-width: 769px) {
-  .grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  }
-}
-.title-stack {
-  position: relative;
-}
-
-.title-normal,
-.title-fancy {
-  position: absolute;
-  left: 0;
-  top: 0;
-  transition:
-    opacity 200ms ease,
-    transform 200ms ease;
-}
-
-.modal .title-normal {
-  opacity: 0;
-  transform: translateY(-4px);
-}
-
-.modal .title-fancy {
-  opacity: 1;
-  transform: translateY(0);
+h2,
+h3 {
+  width: fit-content;
 }
 </style>

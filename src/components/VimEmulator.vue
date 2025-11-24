@@ -410,14 +410,16 @@ onBeforeUnmount(() => {
     </div>
 
     <div class="hint">
-      <p>
-        Movement: <kbd>h</kbd><kbd>j</kbd><kbd>k</kbd><kbd>l</kbd>, <br /><kbd>d d</kbd> (delete
-        line), <br /><kbd>d i w</kbd> (delete inner word), <br /><kbd>x</kbd> (delete char),
-        <br /><kbd>i</kbd>/<kbd>I</kbd> (insert / start of line), <kbd>a</kbd> (append), <br /><kbd
-          >Esc</kbd
-        >
-        to exit insert. <kbd>Backspace</kbd> deletes, <kbd>Enter</kbd> new line.
-      </p>
+      <div class="hint-controls">
+        <p>
+          Movement: <kbd>h</kbd><kbd>j</kbd><kbd>k</kbd><kbd>l</kbd> | <kbd>d d</kbd> (delete line)
+          | <kbd>d i w</kbd> (delete inner word) | <kbd>x</kbd> (delete char)
+        </p>
+        <p>
+          Edit: <kbd>i</kbd>/<kbd>I</kbd> (insert / start of line) | <kbd>a</kbd> (append) |
+          <kbd>Esc</kbd> to exit insert | <kbd>Backspace</kbd> deletes | <kbd>Enter</kbd> new line.
+        </p>
+      </div>
       <router-link to="/projects" class="btn">View Projects</router-link>
     </div>
   </section>
@@ -427,12 +429,13 @@ onBeforeUnmount(() => {
 /* style was made mostly by chatgpt */
 .vim-wrap {
   display: grid;
-  gap: 1rem;
+  gap: 0.75rem;
   place-items: center;
 }
 .vim-window {
-  width: 85vw;
-  height: 50vh;
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
   border-radius: 0.75rem;
   overflow: hidden;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
@@ -458,11 +461,12 @@ onBeforeUnmount(() => {
 .vim-buffer {
   padding: 1rem 0.75rem 1.25rem;
   min-height: 220px;
-  height: calc(50vh - 60px);
+  height: calc(100% - 60px);
+
   color: #a7f3d0;
   background: #000;
   overflow: auto;
-  -ms-overflwow-style: none;
+  -ms-overflow-style: none;
   scrollbar-width: none;
 }
 .vim-buffer::-webkit-scrollbar {
@@ -527,9 +531,6 @@ onBeforeUnmount(() => {
 .vim-status .pos {
   color: #9ca3af;
 }
-.hint {
-  text-align: center;
-}
 .hint .btn {
   display: inline-block;
   margin-top: 0.5rem;
@@ -543,6 +544,35 @@ onBeforeUnmount(() => {
 .hint .btn:hover {
   filter: brightness(1.1);
 }
+kbd {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  padding: 0.15rem 0.4rem;
+  margin: 0 2px;
+  font-family: inherit;
+  font-size: 0.9em;
+  font-weight: bold;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  color: #e5e7eb;
+}
+
+.hint {
+  text-align: center;
+  padding: 1rem;
+  background: var(--color-background-soft, #111);
+  border-radius: 0.75rem;
+  border: 1px solid #1f2937;
+  width: 100%;
+  /* CRITICAL: Removed margin-top/bottom if any, relying on vim-wrap gap */
+}
+
+.hint-controls p {
+  line-height: 1.8;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
 @media (prefers-color-scheme: light) {
   .vim-window {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
