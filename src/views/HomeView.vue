@@ -1,17 +1,21 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import DOMPurify from 'dompurify'
+import { marked } from 'marked'
 import VimEmulator from '../components/VimEmulator.vue'
 
 const vimRef = ref<InstanceType<typeof VimEmulator> | null>(null)
 const renderedHtml = ref<string | null>(null)
 
-// Called when the user presses "Render"
 async function onRender() {
-  // get buffer from child
-  const raw = vimRef.value?.getText?.() ?? ''
-  // sanitize `raw` using DOMPurify in production to avoid XSS.
-  renderedHtml.value = DOMPurify.sanitize(raw)
+  // Get the raw content (Markdown + embedded <style>) from the child
+  const rawContent = vimRef.value?.getText?.() ?? ''
+
+  // Convert Markdown to raw HTML using marked.
+  const rawHtml = marked(rawContent)
+
+  // Sanitize the HTML using DOMPurify.
+  renderedHtml.value = DOMPurify.sanitize(rawHtml)
 }
 
 // Go back to emulator view
@@ -56,8 +60,12 @@ function onEdit() {
   padding-top: calc(130px + 2.5em);
 }
 .rendered-terminal {
-  color: #d1fae5;
+  color: var(--color-text);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+.rendered-terminal strong {
+  font-weight: bold !important;
 }
 
 .terminal-wrapper {
@@ -107,10 +115,10 @@ function onEdit() {
 }
 
 .render-btn {
-  pointer-events: auto; /* allow clicks on the button itself */
-  background: rgba(17, 24, 39, 0.85); /* glassy dark */
-  color: #e6ffef;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  pointer-events: auto;
+  background: var(--color-background-soft);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
   padding: 0.45rem 0.7rem;
   border-radius: 0.6rem;
   font:
@@ -131,6 +139,7 @@ function onEdit() {
 .render-btn:hover {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
   transform: scale(1.02);
+  border: 1px solid var(--color-border-hover);
 }
 .render-btn:active {
   transform: translateY(-1px) scale(0.995);

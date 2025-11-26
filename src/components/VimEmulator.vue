@@ -1,41 +1,39 @@
 <script setup>
 import { onMounted, onBeforeUnmount, ref, computed, nextTick, watch } from 'vue'
 
-//config
 const MESSAGE = `<div class="card">
-  <h1>Hi, I'm miikamenk</h1>
-  <h3>Full-Stack Software Developer</h3><br/>
 
-  <p>
-    Passionate about all kinds of tech especially building custom electronics,
-    like mechanical keyboards and audio gear.
-  </p><br/>
+# Hi, I'm miikamenk
 
-  <p>
-    I'm always building something. I have too many projects, mostly designing electronics, 3D
-    modeling and printing, making open source programs that I find useful or a fun challenge to
-    make.
-  </p><br/>
+### Full-Stack Software Developer | Based in Finland
 
-  <p>
-    I’m really into Linux, Vim, and bleeding-edge tooling.
-  </p><br/>
+<br/>
 
-  <p>
-    Advocate for open-source software and hardware.
-    Try out this interactive Vim terminal I built and explore the rest of my site!
-  </p>
-  <div class="social-buttons">
-    <a href="https://github.com/miikamenk" target="_blank" aria-label="GitHub">
-      <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" alt="GitHub"/>
-    </a>
-    <a href="https://www.linkedin.com/in/miika-ritokangas/" target="_blank" aria-label="LinkedIn">
-      <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/linkedin.svg" alt="LinkedIn"/>
-    </a>
-    <a href="mailto:miikamenk@duck.com" target="_blank" aria-label="Email">
+I specialize in building applications with a passion for bleeding-edge tooling, Linux, and Vim.
+
+<br/>
+
+Outside of software, I'm an avid maker and enthusiast of custom electronics. My personal projects frequently involve:
+
+* **Hardware Design:** Custom mechanical keyboards and audio gear.
+* **Open Source:** Designing useful programs and tackling fun engineering challenges.
+* **Tooling:** Deep expertise in Linux, Vim, and development workflow optimization.
+
+<br/>
+
+Try out this interactive Vim terminal I built and explore the rest of my site!
+
+<div class="social-buttons">
+  <a href="https://github.com/miikamenk" target="_blank" aria-label="GitHub">
+    <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" alt="GitHub"/>
+  </a>
+  <a href="https://www.linkedin.com/in/miika-ritokangas/" target="_blank" aria-label="LinkedIn">
+    <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/linkedin.svg" alt="LinkedIn"/>
+  </a>
+  <a href="mailto:miikamenk@duck.com" target="_blank" aria-label="Email">
     <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/gmail.svg" alt="Email"/>
-    </a>
-  </div>
+  </a>
+</div>
 </div>
 
 <style>
@@ -537,17 +535,18 @@ onBeforeUnmount(() => {
   margin-top: 0.5rem;
   padding: 0.6rem 1rem;
   border-radius: 0.75rem;
-  background: #111827;
-  color: #e5e7eb;
+  background: var(--color-background-soft);
+  color: var(--color-text);
   text-decoration: none;
-  border: 1px solid #1f2937;
+  border: 1px solid var(--color-border);
 }
 .hint .btn:hover {
   filter: brightness(1.1);
+  border: 1px solid var(--color-border-hover);
 }
 kbd {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--color-background-soft);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   padding: 0.15rem 0.4rem;
   margin: 0 2px;
@@ -555,7 +554,7 @@ kbd {
   font-size: 0.9em;
   font-weight: bold;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-  color: #e5e7eb;
+  color: var(--color-text);
 }
 
 .hint {
@@ -563,7 +562,7 @@ kbd {
   padding: 1rem;
   background: var(--color-background-soft, #111);
   border-radius: 0.75rem;
-  border: 1px solid #1f2937;
+  border: 1px solid var(--color-border);
   width: 100%;
   /* CRITICAL: Removed margin-top/bottom if any, relying on vim-wrap gap */
 }
