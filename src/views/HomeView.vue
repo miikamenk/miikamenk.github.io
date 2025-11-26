@@ -12,7 +12,7 @@ async function onRender() {
   const rawContent = vimRef.value?.getText?.() ?? ''
 
   // Convert Markdown to raw HTML using marked.
-  const rawHtml = marked(rawContent)
+  const rawHtml = await marked(rawContent)
 
   // Sanitize the HTML using DOMPurify.
   renderedHtml.value = DOMPurify.sanitize(rawHtml)
