@@ -136,16 +136,16 @@ async function onSubmit() {
 
 <style scoped>
 .contact {
-  max-width: 720px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 3rem 1.5rem;
+  padding: 2rem 1rem;
 }
 
 .form {
   display: grid;
   gap: 1.5rem;
   background: var(--color-background-soft, #0b0b0b);
-  padding: 2rem;
+  padding: 1.5rem;
   border-radius: 1rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
@@ -153,7 +153,22 @@ async function onSubmit() {
 .grid-fields {
   display: grid;
   gap: 1.5rem;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .contact {
+    max-width: 720px;
+    padding: 3rem 1.5rem;
+  }
+
+  .form {
+    padding: 2rem;
+  }
+
+  .grid-fields {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
 }
 
 .field {
@@ -172,13 +187,14 @@ label {
 input,
 textarea {
   width: 100%;
-  padding: 0.8rem 1rem;
+  padding: 1rem;
   border: 1px solid var(--color-border, #334155);
   border-radius: 0.5rem;
   background: var(--color-background-soft, #0b0b0b);
   color: var(--color-text, #e5e7eb);
   transition: border-color 0.2s;
-  font-size: 1rem;
+  font-size: 16px; /* Prevents zoom on iOS */
+  min-height: 44px;
 }
 
 input:focus,
@@ -216,7 +232,7 @@ small {
 }
 
 button {
-  padding: 0.8rem 1.5rem;
+  padding: 1rem 1.5rem;
   border-radius: 0.5rem;
   border: none;
   background: #007bff;
@@ -228,6 +244,8 @@ button {
     background-color 0.2s,
     opacity 0.2s;
   justify-self: start;
+  min-height: 48px;
+  min-width: 120px;
 }
 
 button:hover:not([disabled]) {

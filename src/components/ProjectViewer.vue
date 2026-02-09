@@ -229,12 +229,14 @@ function setViewName(el: Element | null, name: string | null) {
   gap: 8px;
   background: var(--color-background-soft);
   border: 1px solid var(--color-border, #ddd);
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1rem;
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.9rem;
   color: var(--color-text);
   transition: all 0.2s;
+  min-height: 44px;
+  min-width: 120px;
 }
 
 .projects-header {
@@ -337,7 +339,7 @@ function setViewName(el: Element | null, name: string | null) {
   inset: 0;
   z-index: 2000;
   overflow-y: auto;
-  padding: 2rem 1rem;
+  padding: 1rem 0.5rem;
   background: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(5px);
 }
@@ -346,11 +348,22 @@ function setViewName(el: Element | null, name: string | null) {
   background: var(--color-background);
   width: 100%;
   max-width: 800px;
-  margin: 2rem auto;
-  padding: 2.5rem;
+  margin: 1rem auto;
+  padding: 1.5rem;
   border-radius: 16px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
   position: relative;
+}
+
+@media (min-width: 768px) {
+  .modal {
+    padding: 2rem 1rem;
+  }
+
+  .modal-content {
+    margin: 2rem auto;
+    padding: 2.5rem;
+  }
 }
 
 .modal-content h2 {
@@ -383,11 +396,11 @@ function setViewName(el: Element | null, name: string | null) {
 
 .close-btn {
   position: fixed;
-  top: 2rem;
-  right: 2rem;
+  top: 1rem;
+  right: 1rem;
   z-index: 2005;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -399,6 +412,15 @@ function setViewName(el: Element | null, name: string | null) {
   font-size: 1.2rem;
   color: #333;
   transform: none;
+}
+
+@media (min-width: 768px) {
+  .close-btn {
+    top: 2rem;
+    right: 2rem;
+    width: 40px;
+    height: 40px;
+  }
 }
 </style>
 

@@ -59,7 +59,7 @@ header {
 
 .header-container {
   margin: 0 auto;
-  padding: 0.75rem 2rem;
+  padding: 0.5rem 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -68,19 +68,38 @@ header {
 .left-section {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 .logo {
-  width: 100px;
-  height: 100px;
+  width: 50px;
+  height: 50px;
 }
 
 .port-header {
-  font-size: 2.5rem;
+  font-size: 1.5rem;
   font-weight: 900;
   margin: 0;
   color: var(--color-text);
+}
+
+@media (min-width: 768px) {
+  .header-container {
+    padding: 0.75rem 2rem;
+  }
+
+  .left-section {
+    gap: 0.75rem;
+  }
+
+  .logo {
+    width: 100px;
+    height: 100px;
+  }
+
+  .port-header {
+    font-size: 2.5rem;
+  }
 }
 
 .desktop-nav {
@@ -121,9 +140,18 @@ header {
 .menu-button {
   background: none;
   border: none;
-  font-size: 2rem;
+  font-size: 1.5rem;
   cursor: pointer;
   color: var(--color-text);
+  padding: 0.75rem;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.menu-button:hover {
+  background-color: var(--color-border-hover);
 }
 
 .dropdown-menu {
@@ -133,20 +161,24 @@ header {
   background: var(--color-background);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   border-radius: 8px;
-  padding: 0.75rem 1rem;
+  padding: 0.5rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  min-width: 150px;
+  gap: 0.25rem;
+  min-width: 160px;
   animation: fadeIn 0.2s ease;
 }
 
 .dropdown-menu a {
   text-decoration: none;
   color: var(--color-text);
-  padding: 0.5rem;
-  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
   transition: background-color 0.2s ease;
+  font-size: 1rem;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
 }
 
 .dropdown-menu a:hover,

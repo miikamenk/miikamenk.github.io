@@ -52,6 +52,20 @@ Try out this interactive Vim terminal I built and explore the rest of my site!
   justify-content: center;
 }
 
+.social-buttons a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.social-buttons a:hover {
+  background-color: var(--color-border-hover);
+}
+
 .social-buttons a img {
   width: 32px;
   height: 32px;
@@ -59,7 +73,7 @@ Try out this interactive Vim terminal I built and explore the rest of my site!
   transition: all 0.2s ease;
 }
 
-.social-buttons a img:hover {
+.social-buttons a:hover img {
   filter: brightness(1) invert(0);
   transform: scale(1.1);
 }
@@ -433,13 +447,20 @@ onBeforeUnmount(() => {
 }
 .vim-window {
   width: 100%;
-  height: 60vh;
-  min-height: 300px;
+  height: 50vh;
+  min-height: 250px;
   border-radius: 0.75rem;
   overflow: hidden;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
   background: #000;
   border: 1px solid #1f2937;
+}
+
+@media (min-width: 768px) {
+  .vim-window {
+    height: 60vh;
+    min-height: 300px;
+  }
 }
 .vim-title {
   background: #0b0b0b;

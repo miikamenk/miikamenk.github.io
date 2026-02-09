@@ -3,8 +3,15 @@
 #app {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  padding: 0 2rem;
+  grid-template-columns: 1fr;
+  padding: 0 1rem;
+}
+
+@media (min-width: 768px) {
+  #app {
+    grid-template-columns: 1fr 1fr;
+    padding: 0 2rem;
+  }
 }
 
 #app > div {
@@ -21,4 +28,31 @@ a,
   color: hsla(160, 100%, 37%, 1);
   transition: 0.4s;
   padding: 3px;
+}
+
+/* better mobile/accessibility styling */
+
+button,
+a,
+input,
+textarea,
+select {
+  min-height: 44px;
+}
+
+button {
+  min-width: 44px;
+}
+
+a {
+  display: inline-block;
+  min-height: auto;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--color-border-hover);
+  outline-offset: 2px;
 }

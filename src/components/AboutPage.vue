@@ -23,12 +23,12 @@
   justify-content: center;
   align-items: center;
   min-height: 80vh;
-  padding: 2rem;
+  padding: 1rem;
 }
 
 .card {
   background: var(--color-background);
-  padding: 2rem 3rem;
+  padding: 1.5rem;
   border-radius: 1rem;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
   max-width: 700px;
@@ -38,17 +38,36 @@
 }
 
 .name {
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 800;
   margin-bottom: 0.5rem;
   color: var(--color-text);
 }
 
 .subtitle {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 500;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   color: var(--color-text-secondary, #666);
+}
+
+@media (min-width: 768px) {
+  .about-page {
+    padding: 2rem;
+  }
+
+  .card {
+    padding: 2rem 3rem;
+  }
+
+  .name {
+    font-size: 2.5rem;
+  }
+
+  .subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+  }
 }
 
 .section-title {

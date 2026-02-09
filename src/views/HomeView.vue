@@ -54,10 +54,20 @@ function onEdit() {
 .home {
   min-height: 100vh;
   display: flex;
-  /* Reduced padding-top, relying on flex center */
   align-items: center;
   justify-content: center;
-  padding-top: calc(130px + 2.5em);
+  padding-top: 80px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .home {
+    padding-top: calc(130px + 2.5em);
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
 .rendered-terminal {
   color: var(--color-text);
@@ -81,17 +91,25 @@ function onEdit() {
 
 .vim-controls {
   position: absolute;
-  top: -2.5rem;
+  top: -2rem;
   right: 0;
   left: unset;
   transform: none;
-  padding-right: 0.75rem;
+  padding-right: 0.5rem;
   width: auto;
   display: flex;
   justify-content: flex-end;
-  gap: 1rem;
+  gap: 0.5rem;
   pointer-events: auto;
   z-index: 30;
+}
+
+@media (min-width: 768px) {
+  .vim-controls {
+    top: -2.5rem;
+    padding-right: 0.75rem;
+    gap: 1rem;
+  }
 }
 
 .vim-controls .render-btn {
@@ -119,7 +137,7 @@ function onEdit() {
   background: var(--color-background-soft);
   color: var(--color-text);
   border: 1px solid var(--color-border);
-  padding: 0.45rem 0.7rem;
+  padding: 0.6rem 1rem;
   border-radius: 0.6rem;
   font:
     13px ui-monospace,
@@ -131,6 +149,8 @@ function onEdit() {
     filter 160ms ease,
     opacity 160ms;
   opacity: 1;
+  min-height: 44px;
+  min-width: 80px;
 }
 .render-btn.jump {
   animation: jump 1s infinite;
