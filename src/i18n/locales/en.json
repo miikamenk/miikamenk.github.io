@@ -12,7 +12,8 @@
     "newest": "Newest",
     "oldest": "Oldest",
     "uploaded": "Uploaded:",
-    "noImage": "No image available"
+    "noImage": "No image available",
+    "reset": "Reset"
   },
   "contact": {
     "name": "Name",

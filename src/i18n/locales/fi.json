@@ -12,7 +12,8 @@
     "newest": "Uusin",
     "oldest": "Vanhin",
     "uploaded": "Ladattu:",
-    "noImage": "Kuvaa ei ole saatavilla"
+    "noImage": "Kuvaa ei ole saatavilla",
+    "reset": "Resetoi"
   },
   "contact": {
     "name": "Nimi",

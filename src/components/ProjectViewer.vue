@@ -75,6 +75,13 @@ const sortedProjects = computed(() => {
 const selectedProject = ref<Project | null>(null)
 const fullscreenImage = ref<string | null>(null)
 
+// Zoom and pan state
+const scale = ref(1)
+const position = ref({ x: 0, y: 0 })
+const isDragging = ref(false)
+const dragStart = ref({ x: 0, y: 0 })
+const lastTouchDistance = ref(0)
+
 function openProject(project: Project, evt?: MouseEvent) {
   if (!project) return
   const cardEl =
@@ -133,6 +140,87 @@ function openFullscreenImage(src: string) {
 
 function closeFullscreenImage() {
   fullscreenImage.value = null
+  // Reset zoom state
+  scale.value = 1
+  position.value = { x: 0, y: 0 }
+}
+
+const imageStyle = computed(() => ({
+  transform: `translate(${position.value.x}px, ${position.value.y}px) scale(${scale.value})`,
+  transition: isDragging.value ? 'none' : 'transform 0.3s ease',
+  cursor: isDragging.value ? 'grabbing' : 'grab',
+}))
+
+const imageContainerStyle = computed(() => ({
+  overflow: 'hidden',
+}))
+
+// Zoom controls
+function zoomIn() {
+  if (scale.value < 3) {
+    scale.value = Math.min(scale.value * 1.2, 3)
+  }
+}
+
+function zoomOut() {
+  if (scale.value > 0.5) {
+    scale.value = Math.max(scale.value / 1.2, 0.5)
+  }
+}
+
+function resetZoom() {
+  scale.value = 1
+  position.value = { x: 0, y: 0 }
+}
+
+// Drag functionality
+function startDrag(e: MouseEvent) {
+  if (e.button === 0) {
+    // Left mouse button only
+    isDragging.value = true
+    dragStart.value = { x: e.clientX - position.value.x, y: e.clientY - position.value.y }
+  }
+}
+
+function drag(e: MouseEvent) {
+  if (isDragging.value) {
+    position.value = {
+      x: e.clientX - dragStart.value.x,
+      y: e.clientY - dragStart.value.y,
+    }
+  }
+}
+
+function endDrag() {
+  isDragging.value = false
+}
+
+// Touch functionality
+function handleTouchMove(e: TouchEvent) {
+  if (e.touches.length === 2) {
+    const distance = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY,
+    )
+
+    if (distance > lastTouchDistance.value + 10) {
+      const newScale = scale.value * (distance > lastTouchDistance.value ? 1.1 : 0.9)
+      scale.value = Math.max(0.5, Math.min(3, newScale))
+      lastTouchDistance.value = distance
+    }
+  }
+}
+
+function handleTouchEnd() {
+  lastTouchDistance.value = 0
+}
+
+function handleZoom(e: WheelEvent) {
+  if (e.deltaY < 0) {
+    zoomIn()
+  } else if (e.deltaY > 0) {
+    zoomOut()
+  }
 }
 
 function setViewName(el: Element | null, name: string | null) {
@@ -212,9 +300,38 @@ function setViewName(el: Element | null, name: string | null) {
         <p class="text" v-html="selectedProject!.text"></p>
       </div>
 
-      <div v-if="fullscreenImage" class="fullscreen-viewer" @click.self="closeFullscreenImage">
+      <div
+        v-if="fullscreenImage"
+        class="fullscreen-viewer"
+        @click.self="closeFullscreenImage"
+        @wheel.prevent="handleZoom"
+        @touchmove.prevent="handleTouchMove"
+        @touchend="handleTouchEnd"
+      >
         <button class="fs-close-btn" @click="closeFullscreenImage">✕</button>
-        <img :src="fullscreenImage" class="fs-img" alt="Fullscreen Project Image" />
+        <div class="zoom-controls">
+          <button @click="zoomOut" class="zoom-btn" :disabled="scale <= 0.5">−</button>
+          <button @click="resetZoom" class="zoom-btn reset" :disabled="scale === 1">
+            {{ t('projects.reset') }}
+          </button>
+          <button @click="zoomIn" class="zoom-btn" :disabled="scale >= 3">+</button>
+        </div>
+        <div
+          class="fs-img-container"
+          :style="imageContainerStyle"
+          @mousedown="startDrag"
+          @mousemove="drag"
+          @mouseup="endDrag"
+          @mouseleave="endDrag"
+        >
+          <img
+            :src="fullscreenImage"
+            class="fs-img"
+            :style="imageStyle"
+            :alt="t('projects.uploaded')"
+            draggable="false"
+          />
+        </div>
       </div>
     </div>
   </section>
@@ -461,28 +578,112 @@ h3 {
   cursor: pointer; /* Suggests clicking background closes it */
 }
 
+.fs-img-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
 .fs-img {
-  max-width: 90%;
-  max-height: 90%;
-  object-fit: contain; /* Ensures the image fits within bounds without cropping */
-  transition: transform 0.3s ease;
+  max-width: 90vw;
+  max-height: 90vh;
+  width: auto;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+@media (max-width: 768px) {
+  .zoom-controls {
+    bottom: 1rem;
+    right: 1rem;
+    gap: 0.25rem;
+    padding: 0.25rem;
+  }
+
+  .zoom-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+
+  .fs-close-btn {
+    top: 1rem;
+    right: 1rem;
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+}
+
+.zoom-controls {
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 2005;
+  display: flex;
+  gap: 0.5rem;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 2rem;
+  padding: 0.5rem;
+}
+
+.zoom-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: #333;
+  transition: all 0.2s ease;
+}
+
+.zoom-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 1);
+  transform: scale(1.1);
+}
+
+.zoom-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.zoom-btn.reset {
+  font-size: 0.9rem;
 }
 
 .fs-close-btn {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  background: none;
-  border: none;
-  color: white;
-  font-size: 2rem;
-  font-weight: bold;
+  top: 2rem;
+  right: 2rem;
+  z-index: 2005;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  z-index: 1001; /* Above the image */
-  padding: 10px;
-  line-height: 1;
-  opacity: 0.8;
-  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: #333;
+  transform: none;
 }
 
 .fs-close-btn:hover {

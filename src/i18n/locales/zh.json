@@ -10,9 +10,10 @@
   },
   "projects": {
     "newest": "最新",
-    "oldest": "最旧",
-    "uploaded": "上传时间：",
-    "noImage": "无图片可用"
+    "oldest": "最早",
+    "uploaded": "上传于：",
+    "noImage": "无图片可用",
+    "reset": "重置"
   },
   "contact": {
     "name": "姓名",
