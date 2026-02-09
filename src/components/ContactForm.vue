@@ -1,7 +1,10 @@
 <script setup>
 import { reactive, ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { db } from '@/firebase'
 import { ref as dbRef, push, serverTimestamp } from 'firebase/database'
+
+const { t } = useI18n()
 
 // --- Form state ---
 const form = reactive({ name: '', email: '', message: '', website: '' })
@@ -12,13 +15,13 @@ const blurred = reactive({ name: false, email: false, message: false })
 const emailRe = /^(?!.{255,})([\w.!#$%&'*+/=?`{|}~-]+)@([A-Za-z0-9-]+\.)+[A-Za-z]{2,}$/
 
 const errors = computed(() => ({
-  name: !form.name ? 'Please enter your name' : '',
+  name: !form.name ? t('contact.errors.nameRequired') : '',
   email: !form.email
-    ? 'Please enter your email'
+    ? t('contact.errors.emailRequired')
     : !emailRe.test(form.email)
-      ? 'Enter a valid email'
+      ? t('contact.errors.emailInvalid')
       : '',
-  message: !form.message ? 'Please enter a message' : '',
+  message: !form.message ? t('contact.errors.messageRequired') : '',
 }))
 
 function handleBlur(field) {
@@ -41,12 +44,12 @@ async function onSubmit() {
   blurred.message = true
   status.value = null
   if (errors.value.name || errors.value.email || errors.value.message) {
-    status.value = { type: 'error', message: 'Please fix the errors above.' }
+    status.value = { type: 'error', message: t('contact.errors.fixErrors') }
     return
   }
   // spam honeypot
   if (form.website) {
-    status.value = { type: 'success', message: 'Thanks!' }
+    status.value = { type: 'success', message: t('contact.success') }
     resetForm()
     return
   }
@@ -61,11 +64,10 @@ async function onSubmit() {
       ua: navigator.userAgent,
     })
 
-    status.value = { type: 'success', message: 'Thanks! Your message was sent.' }
-    resetForm()
+    status.value = { type: 'success', message: t('contact.success') }
   } catch (err) {
     console.error(err)
-    status.value = { type: 'error', message: 'Something went wrong. Please try again.' }
+    status.value = { type: 'error', message: t('contact.error') }
   } finally {
     loading.value = false
   }
@@ -77,7 +79,7 @@ async function onSubmit() {
     <form class="form" @submit.prevent="onSubmit" novalidate>
       <div class="grid-fields">
         <div class="field">
-          <label for="name">Name</label>
+          <label for="name">{{ t('contact.name') }}</label>
           <input
             id="name"
             v-model.trim="form.name"
@@ -91,7 +93,7 @@ async function onSubmit() {
         </div>
 
         <div class="field">
-          <label for="email">Email</label>
+          <label for="email">{{ t('contact.email') }}</label>
           <input
             id="email"
             v-model.trim="form.email"
@@ -106,7 +108,7 @@ async function onSubmit() {
       </div>
 
       <div class="field">
-        <label for="message">Message</label>
+        <label for="message">{{ t('contact.message') }}</label>
         <textarea
           id="message"
           v-model.trim="form.message"
@@ -127,7 +129,9 @@ async function onSubmit() {
         aria-hidden="true"
       />
 
-      <button type="submit" :disabled="loading">{{ loading ? 'Sending…' : 'Send' }}</button>
+      <button type="submit" :disabled="loading">
+        {{ loading ? t('contact.sending') : t('contact.send') }}
+      </button>
 
       <p v-if="status" :class="['status', status.type]">{{ status.message }}</p>
     </form>

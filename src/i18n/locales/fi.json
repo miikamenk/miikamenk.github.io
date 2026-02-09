@@ -1,0 +1,52 @@
+{
+  "nav": {
+    "home": "Koti",
+    "projects": "Projektit",
+    "contact": "Yhteystiedot"
+  },
+  "home": {
+    "render": "Renderöi",
+    "edit": "Muokkaa"
+  },
+  "projects": {
+    "newest": "Uusin",
+    "oldest": "Vanhin",
+    "uploaded": "Ladattu:",
+    "noImage": "Kuvaa ei ole saatavilla"
+  },
+  "contact": {
+    "name": "Nimi",
+    "email": "Sähköposti",
+    "message": "Viesti",
+    "send": "Lähetä",
+    "sending": "Lähetetään…",
+    "errors": {
+      "nameRequired": "Syötä nimesi",
+      "emailRequired": "Syötä sähköpostiosoitteesi",
+      "emailInvalid": "Syötä kelvollinen sähköpostiosoite",
+      "messageRequired": "Syötä viestisi",
+      "fixErrors": "Korjaa yllä olevat virheet."
+    },
+    "success": "Kiitos! Viestisi on lähetetty.",
+    "error": "Jotain meni pieleen. Yritä uudelleen."
+  },
+  "about": {
+    "title": "miikamenk",
+    "subtitle": "Itseoppinut ohjelmistokehittäjä",
+    "aboutMe": "Minusta",
+    "items": [
+      "On kirjoittanut ohjelmistoja yli vuosikymmenen ajan",
+      "Elektroniikkasuunnittelun ja mukautettujen näppäimistöiden harrastaja",
+      "Avoimen lähdekoodin puolestapuhuja",
+      "Vim-rakastaja"
+    ]
+  },
+  "theme": {
+    "toggle": "Vaihda tummaa tilaa",
+    "light": "Vaalea tila",
+    "dark": "Tumma tila"
+  },
+  "language": {
+    "switch": "Vaihda kieli"
+  }
+}

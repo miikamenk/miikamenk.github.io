@@ -3,7 +3,9 @@ import { ref } from 'vue'
 import DOMPurify from 'dompurify'
 import { marked } from 'marked'
 import VimEmulator from '../components/VimEmulator.vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const vimRef = ref<InstanceType<typeof VimEmulator> | null>(null)
 const renderedHtml = ref<string | null>(null)
 
@@ -34,9 +36,9 @@ function onEdit() {
           @click="onRender"
           v-if="!renderedHtml"
         >
-          Render
+          {{ t('home.render') }}
         </button>
-        <button class="render-btn" @click="onEdit" v-else>Edit</button>
+        <button class="render-btn" @click="onEdit" v-else>{{ t('home.edit') }}</button>
       </div>
 
       <VimEmulator v-show="!renderedHtml" ref="vimRef" />

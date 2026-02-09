@@ -1,17 +1,18 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+</script>
 
 <template>
   <section class="about-page">
     <div class="card">
-      <h1 class="name">miikamenk</h1>
-      <h2 class="subtitle">Self-taught software developer</h2>
+      <h1 class="name">{{ t('about.title') }}</h1>
+      <h2 class="subtitle">{{ t('about.subtitle') }}</h2>
 
-      <h3 class="section-title">About me</h3>
+      <h3 class="section-title">{{ t('about.aboutMe') }}</h3>
       <ul class="about-list">
-        <li>Has been writing software for over a decade</li>
-        <li>Hobbyist in electronics design and custom keyboards</li>
-        <li>Open source advocator</li>
-        <li>Vim lover</li>
+        <li v-for="(item, index) in t('about.items')" :key="index">{{ item }}</li>
       </ul>
     </div>
   </section>

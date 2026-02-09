@@ -1,12 +1,25 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import DarkModeToggle from '@/components/DarkModeToggle.vue'
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
 
 const isMenuOpen = ref(false)
+const { t, locale } = useI18n()
 
 function toggleMenu() {
   isMenuOpen.value = !isMenuOpen.value
 }
+
+const navLinks = computed(() => [
+  { name: 'home', label: t('nav.home'), path: '/' },
+  { name: 'projects', label: t('nav.projects'), path: '/projects' },
+  { name: 'contact', label: t('nav.contact'), path: '/contact' },
+])
+
+// Get current locale
+const currentLocale = computed(() => locale.value)
 </script>
 
 <template>
@@ -15,22 +28,36 @@ function toggleMenu() {
       <div class="left-section">
         <img alt="Vue logo" class="logo" src="@/assets/logo.png" width="150" height="150" />
         <h1 class="port-header">
-          <RouterLink to="/">miikamenk</RouterLink>
+          <RouterLink :to="`/${currentLocale}`">miikamenk</RouterLink>
         </h1>
       </div>
 
       <nav class="desktop-nav">
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/projects">Projects</RouterLink>
-        <RouterLink to="/contact">Contact</RouterLink>
+        <RouterLink v-for="link in navLinks" :key="link.name" :to="`/${currentLocale}${link.path}`">
+          {{ link.label }}
+        </RouterLink>
       </nav>
+
+      <div class="right-section">
+        <DarkModeToggle />
+        <LanguageSwitcher />
+      </div>
 
       <div class="mobile-nav">
         <button @click="toggleMenu" class="menu-button">☰</button>
         <div v-if="isMenuOpen" class="dropdown-menu">
-          <RouterLink to="/" @click="toggleMenu">Home</RouterLink>
-          <RouterLink to="/projects" @click="toggleMenu">Projects</RouterLink>
-          <RouterLink to="/contact" @click="toggleMenu">Contact</RouterLink>
+          <RouterLink
+            v-for="link in navLinks"
+            :key="link.name"
+            :to="`/${currentLocale}${link.path}`"
+            @click="toggleMenu"
+          >
+            {{ link.label }}
+          </RouterLink>
+          <div class="mobile-controls">
+            <DarkModeToggle />
+            <LanguageSwitcher />
+          </div>
         </div>
       </div>
     </div>
@@ -105,6 +132,12 @@ header {
 .desktop-nav {
   display: flex;
   gap: 2rem;
+}
+
+.right-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .desktop-nav a {
@@ -192,6 +225,18 @@ header {
   }
   .mobile-nav {
     display: block;
+  }
+  .right-section {
+    display: none;
+  }
+
+  .mobile-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border-top: 1px solid var(--color-border);
+    margin-top: 0.5rem;
   }
 }
 

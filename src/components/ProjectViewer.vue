@@ -5,6 +5,9 @@ import { Buffer } from 'buffer'
 import { ref, computed } from 'vue'
 import matter from 'gray-matter'
 import { marked } from 'marked'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const projectFiles = import.meta.glob('../projects/*.md', {
   eager: true,
@@ -14,7 +17,10 @@ const projectFiles = import.meta.glob('../projects/*.md', {
 const imageFiles = import.meta.glob('../projects/images/*', { eager: true, import: 'default' })
 
 // fallback svg image
-const fallbackSvg = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600' preserveAspectRatio='xMidYMid meet'><defs><linearGradient id='g' x1='0' x2='1'><stop offset='0' stop-color='%237fb7ff'/><stop offset='1' stop-color='%238fb8d9'/></linearGradient></defs><rect width='100%' height='100%' rx='18' fill='url(%23g)'/><g transform='translate(120,100)' fill='none' stroke='%23ffffff' stroke-width='12' stroke-linecap='round' stroke-linejoin='round'><rect x='40' y='30' width='520' height='360' rx='20' opacity='0.18' fill='none' stroke='%23ffffff'/><circle cx='300' cy='210' r='70' opacity='0.2' fill='none' stroke='%23ffffff'/><path d='M80 80 L140 80 L170 40 L200 80 L260 80' opacity='0.12' stroke='%23ffffff'/></g><text x='50%' y='92%' font-family='system-ui, -apple-system, "Segoe UI", Roboto' font-size='18' fill='rgba(255,255,255,0.9)' text-anchor='middle'>No image available</text></svg>`
+const getFallbackSvg = () => {
+  const noImageText = encodeURIComponent(t('projects.noImage'))
+  return `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600' preserveAspectRatio='xMidYMid meet'><defs><linearGradient id='g' x1='0' x2='1'><stop offset='0' stop-color='%237fb7ff'/><stop offset='1' stop-color='%238fb8d9'/></linearGradient></defs><rect width='100%' height='100%' rx='18' fill='url(%23g)'/><g transform='translate(120,100)' fill='none' stroke='%23ffffff' stroke-width='12' stroke-linecap='round' stroke-linejoin='round'><rect x='40' y='30' width='520' height='360' rx='20' opacity='0.18' fill='none' stroke='%23ffffff'/><circle cx='300' cy='210' r='70' opacity='0.2' fill='none' stroke='%23ffffff'/><path d='M80 80 L140 80 L170 40 L200 80 L260 80' opacity='0.12' stroke='%23ffffff'/></g><text x='50%' y='92%' font-family='system-ui, -apple-system, "Segoe UI", Roboto' font-size='18' fill='rgba(255,255,255,0.9)' text-anchor='middle'>${noImageText}</text></svg>`
+}
 
 type Project = {
   id: string
@@ -141,7 +147,7 @@ function setViewName(el: Element | null, name: string | null) {
   <section class="projects">
     <div class="projects-header">
       <button class="sort-btn" @click="sortOrder = sortOrder === 'newest' ? 'oldest' : 'newest'">
-        <span>{{ sortOrder === 'newest' ? 'Newest' : 'Oldest' }}</span>
+        <span>{{ sortOrder === 'newest' ? t('projects.newest') : t('projects.oldest') }}</span>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="16"
@@ -170,9 +176,9 @@ function setViewName(el: Element | null, name: string | null) {
         :data-project-card="project.id"
       >
         <img
-          :src="project.thumbnail || fallbackSvg"
+          :src="project.thumbnail || getFallbackSvg()"
           :alt="project.title"
-          @error="(e) => ((e.target as HTMLImageElement).src = fallbackSvg)"
+          @error="(e) => ((e.target as HTMLImageElement).src = getFallbackSvg())"
         />
         <h3>{{ project.title }}</h3>
       </div>
@@ -193,10 +199,10 @@ function setViewName(el: Element | null, name: string | null) {
           {{ selectedProject!.title }}
         </h2>
 
-        <p class="date">Uploaded: {{ selectedProject!.uploadDate }}</p>
+        <p class="date">{{ t('projects.uploaded') }} {{ selectedProject!.uploadDate }}</p>
 
         <img
-          v-if="selectedProject!.thumbnail && selectedProject!.thumbnail !== fallbackSvg"
+          v-if="selectedProject!.thumbnail && selectedProject!.thumbnail !== getFallbackSvg()"
           class="modal-img"
           :src="selectedProject!.thumbnail"
           :style="{ viewTransitionName: `thumb-${selectedProject!.id}` }"

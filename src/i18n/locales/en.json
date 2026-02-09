@@ -1,0 +1,52 @@
+{
+  "nav": {
+    "home": "Home",
+    "projects": "Projects",
+    "contact": "Contact"
+  },
+  "home": {
+    "render": "Render",
+    "edit": "Edit"
+  },
+  "projects": {
+    "newest": "Newest",
+    "oldest": "Oldest",
+    "uploaded": "Uploaded:",
+    "noImage": "No image available"
+  },
+  "contact": {
+    "name": "Name",
+    "email": "Email",
+    "message": "Message",
+    "send": "Send",
+    "sending": "Sending...",
+    "errors": {
+      "nameRequired": "Please enter your name",
+      "emailRequired": "Please enter your email",
+      "emailInvalid": "Enter a valid email",
+      "messageRequired": "Please enter a message",
+      "fixErrors": "Please fix the errors above."
+    },
+    "success": "Thanks! Your message was sent.",
+    "error": "Something went wrong. Please try again."
+  },
+  "about": {
+    "title": "miikamenk",
+    "subtitle": "Self-taught software developer",
+    "aboutMe": "About me",
+    "items": [
+      "Has been writing software for over a decade",
+      "Hobbyist in electronics design and custom keyboards",
+      "Open source advocator",
+      "Vim lover"
+    ]
+  },
+  "theme": {
+    "toggle": "Toggle dark mode",
+    "light": "Light mode",
+    "dark": "Dark mode"
+  },
+  "language": {
+    "switch": "Switch language"
+  }
+}

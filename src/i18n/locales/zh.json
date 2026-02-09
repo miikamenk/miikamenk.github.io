@@ -1,0 +1,47 @@
+{
+  "nav": {
+    "home": "首页",
+    "projects": "项目",
+    "contact": "联系"
+  },
+  "home": {
+    "render": "渲染",
+    "edit": "编辑"
+  },
+  "projects": {
+    "newest": "最新",
+    "oldest": "最旧",
+    "uploaded": "上传时间：",
+    "noImage": "无图片可用"
+  },
+  "contact": {
+    "name": "姓名",
+    "email": "邮箱",
+    "message": "留言",
+    "send": "发送",
+    "sending": "发送中…",
+    "errors": {
+      "nameRequired": "请输入您的姓名",
+      "emailRequired": "请输入您的邮箱",
+      "emailInvalid": "请输入有效的邮箱地址",
+      "messageRequired": "请输入留言内容",
+      "fixErrors": "请修正以上错误。"
+    },
+    "success": "谢谢！您的消息已发送。",
+    "error": "出现错误，请重试。"
+  },
+  "about": {
+    "title": "miikamenk",
+    "subtitle": "自学成才的软件开发者",
+    "aboutMe": "关于我",
+    "items": ["编写软件已超过十年", "电子设计和定制键盘爱好者", "开源倡导者", "Vim 爱好者"]
+  },
+  "theme": {
+    "toggle": "切换深色模式",
+    "light": "浅色模式",
+    "dark": "深色模式"
+  },
+  "language": {
+    "switch": "切换语言"
+  }
+}
