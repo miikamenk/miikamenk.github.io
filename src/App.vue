@@ -14,7 +14,9 @@ function toggleMenu() {
     <div class="header-container">
       <div class="left-section">
         <img alt="Vue logo" class="logo" src="@/assets/logo.png" width="150" height="150" />
-        <h1 class="port-header">miikamenk</h1>
+        <h1 class="port-header">
+          <RouterLink to="/">miikamenk</RouterLink>
+        </h1>
       </div>
 
       <nav class="desktop-nav">
