@@ -504,6 +504,7 @@ function setViewName(el: Element | null, name: string | null) {
   margin: 1.5rem 0;
   border-radius: 8px;
   object-fit: contain;
+  cursor: pointer;
 }
 
 .date {
