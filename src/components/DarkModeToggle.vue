@@ -44,14 +44,14 @@ const { t } = useI18n()
   position: absolute;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(90deg, var(--accent-color) 0%, var(--color-background-soft) 100%);
   border-radius: 12px;
   transition: all 0.3s ease;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .theme-toggle.dark-mode .toggle-track {
-  background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+  background: linear-gradient(90deg, var(--color-background-soft) 5%, var(--accent-color) 100%);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
