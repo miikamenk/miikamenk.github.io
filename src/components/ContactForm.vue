@@ -140,7 +140,8 @@ async function onSubmit() {
 
 <style scoped>
 .contact {
-  max-width: 100%;
+  width: 100%;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 1rem;
 }
@@ -162,7 +163,6 @@ async function onSubmit() {
 
 @media (min-width: 768px) {
   .contact {
-    max-width: 720px;
     padding: 3rem 1.5rem;
   }
 
@@ -171,7 +171,7 @@ async function onSubmit() {
   }
 
   .grid-fields {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   }
 }
 
@@ -199,6 +199,8 @@ textarea {
   transition: border-color 0.2s;
   font-size: 16px; /* Prevents zoom on iOS */
   min-height: 44px;
+  resize: vertical;
+  max-width: 100%;
 }
 
 input:focus,
