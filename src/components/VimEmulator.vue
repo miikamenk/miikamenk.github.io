@@ -484,7 +484,7 @@ onBeforeUnmount(() => {
   height: calc(100% - 60px);
 
   color: #a7f3d0;
-  background: #000;
+  background: var(--color-background-soft);
   overflow: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -510,7 +510,7 @@ onBeforeUnmount(() => {
   color: #374151;
 }
 .vim-text {
-  color: #d1fae5;
+  color: var(--accent-color);
 }
 .cursor {
   display: inline-block;
