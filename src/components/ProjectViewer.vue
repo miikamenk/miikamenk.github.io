@@ -248,7 +248,7 @@ function handleTouchMove(e: TouchEvent) {
   }
 }
 
-function handleTouchEnd() {
+function handleTouchEnd(e: TouchEvent) {
   if (e.touches.length === 0) {
     isDragging.value = false
     isTouchPanning.value = false
