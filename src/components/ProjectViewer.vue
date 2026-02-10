@@ -82,6 +82,11 @@ const isDragging = ref(false)
 const dragStart = ref({ x: 0, y: 0 })
 const lastTouchDistance = ref(0)
 
+// Touch state for mobile pan and zoom
+const touchStartPos = ref({ x: 0, y: 0 })
+const isTouchPanning = ref(false)
+const initialTouchDistance = ref(0)
+
 function openProject(project: Project, evt?: MouseEvent) {
   if (!project) return
   const cardEl =
@@ -196,15 +201,47 @@ function endDrag() {
 }
 
 // Touch functionality
+function handleTouchStart(e: TouchEvent) {
+  if (e.touches.length === 1) {
+    // Initialize single-finger pan
+    touchStartPos.value = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+    isDragging.value = true
+    isTouchPanning.value = true
+  } else if (e.touches.length === 2) {
+    // Initialize two-finger zoom
+    initialTouchDistance.value = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY,
+    )
+    lastTouchDistance.value = initialTouchDistance.value
+    isTouchPanning.value = false
+  }
+}
+
 function handleTouchMove(e: TouchEvent) {
-  if (e.touches.length === 2) {
+  e.preventDefault()
+
+  if (e.touches.length === 1 && isTouchPanning.value && isDragging.value) {
+    // Handle single-finger pan
+    const deltaX = e.touches[0].clientX - touchStartPos.value.x
+    const deltaY = e.touches[0].clientY - touchStartPos.value.y
+
+    position.value = {
+      x: position.value.x + deltaX,
+      y: position.value.y + deltaY,
+    }
+
+    touchStartPos.value = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+  } else if (e.touches.length === 2) {
+    // Handle two-finger zoom
     const distance = Math.hypot(
       e.touches[0].clientX - e.touches[1].clientX,
       e.touches[0].clientY - e.touches[1].clientY,
     )
 
-    if (distance > lastTouchDistance.value + 10) {
-      const newScale = scale.value * (distance > lastTouchDistance.value ? 1.1 : 0.9)
+    const distanceDiff = distance - lastTouchDistance.value
+    if (Math.abs(distanceDiff) > 10) {
+      const newScale = scale.value * (distanceDiff > 0 ? 1.05 : 0.95)
       scale.value = Math.max(0.5, Math.min(3, newScale))
       lastTouchDistance.value = distance
     }
@@ -212,7 +249,12 @@ function handleTouchMove(e: TouchEvent) {
 }
 
 function handleTouchEnd() {
+  if (e.touches.length === 0) {
+    isDragging.value = false
+    isTouchPanning.value = false
+  }
   lastTouchDistance.value = 0
+  initialTouchDistance.value = 0
 }
 
 function handleZoom(e: WheelEvent) {
@@ -305,12 +347,13 @@ function setViewName(el: Element | null, name: string | null) {
         class="fullscreen-viewer"
         @click.self="closeFullscreenImage"
         @wheel.prevent="handleZoom"
+        @touchstart="handleTouchStart"
         @touchmove.prevent="handleTouchMove"
         @touchend="handleTouchEnd"
       >
         <button class="fs-close-btn" @click="closeFullscreenImage">✕</button>
         <div class="zoom-controls">
-          <button @click="zoomOut" class="zoom-btn" :disabled="scale <= 0.5">−</button>
+          <button @click="zoomOut" class="zoom-btn" :disabled="scale < 0.6">−</button>
           <button @click="resetZoom" class="zoom-btn reset" :disabled="scale === 1">
             {{ t('projects.reset') }}
           </button>
@@ -323,6 +366,10 @@ function setViewName(el: Element | null, name: string | null) {
           @mousemove="drag"
           @mouseup="endDrag"
           @mouseleave="endDrag"
+          @touchstart="handleTouchStart"
+          @touchmove.prevent="handleTouchMove"
+          @touchend="handleTouchEnd"
+          style="touch-action: none"
         >
           <img
             :src="fullscreenImage"
@@ -625,24 +672,26 @@ h3 {
 
 @media (max-width: 768px) {
   .zoom-controls {
-    bottom: 1rem;
+    bottom: 1.5rem;
     right: 1rem;
-    gap: 0.25rem;
-    padding: 0.25rem;
+    gap: 0.5rem;
+    padding: 0.5rem;
   }
 
   .zoom-btn {
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
     font-size: 1rem;
+    touch-action: manipulation;
   }
 
   .fs-close-btn {
     top: 1rem;
     right: 1rem;
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
     font-size: 1rem;
+    touch-action: manipulation;
   }
 }
 
@@ -674,16 +723,22 @@ h3 {
   transition: all 0.2s var(--ease-smooth);
 }
 
-.zoom-btn:hover:not(:disabled) {
+.zoom-btn:hover:not(:disabled),
+.zoom-btn:active:not(:disabled) {
   background: var(--accent-color);
   color: white;
   transform: scale(1.1);
   box-shadow: var(--shadow-lg);
 }
 
+.zoom-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
 .zoom-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
 }
 
 .zoom-btn.reset {
@@ -692,15 +747,15 @@ h3 {
 
 .fs-close-btn {
   position: absolute;
-  top: 2rem;
-  right: 2rem;
+  top: 1rem;
+  right: 1rem;
   z-index: 2005;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -708,6 +763,20 @@ h3 {
   font-size: 1.2rem;
   color: #333;
   transform: none;
+  transition: all 0.2s var(--ease-smooth);
+  touch-action: manipulation;
+}
+
+.close-btn:hover,
+.close-btn:active {
+  background: var(--accent-color);
+  color: white;
+  transform: scale(1.1);
+  box-shadow: var(--shadow-lg);
+}
+
+.close-btn:active {
+  transform: scale(0.95);
 }
 
 .fs-close-btn:hover {

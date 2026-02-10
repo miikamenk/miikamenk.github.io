@@ -6,7 +6,8 @@
 - [x] fix mobile view
 - [x] fix contact form styling
 - [ ] make the home screen look better and do something with mobile vim emulator
-- [ ] fix mobile image pan
+- [x] fix mobile image pan
 - [x] fix menkmenk logo text styling
 - [ ] fix default dark theme mode
 - [ ] fix render/edit button placement
+- [ ] make all projects have a specific custom URL for history and sharing.
