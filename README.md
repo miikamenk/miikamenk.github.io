@@ -8,6 +8,6 @@
 - [ ] make the home screen look better and do something with mobile vim emulator
 - [x] fix mobile image pan
 - [x] fix menkmenk logo text styling
-- [ ] fix default dark theme mode
+- [x] fix default dark theme mode
 - [ ] fix render/edit button placement
 - [ ] make all projects have a specific custom URL for history and sharing.

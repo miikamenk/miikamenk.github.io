@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 
 export function useTheme() {
   const theme = ref<'light' | 'dark' | 'auto'>(
@@ -19,8 +19,12 @@ export function useTheme() {
     } else if (theme.value === 'light') {
       root.removeAttribute('data-theme')
     } else {
-      // auto: remove attribute and let media query handle it
+      // auto: apply system preference immediately
       root.removeAttribute('data-theme')
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      if (prefersDark) {
+        root.setAttribute('data-theme', 'dark')
+      }
     }
   }
 
@@ -47,9 +51,14 @@ export function useTheme() {
   const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
   mediaQuery.addEventListener('change', checkDarkMode)
 
-  // Initialize
-  updateTheme()
-  checkDarkMode()
+  // Initialize properly - ensure DOM is ready before checking
+  onMounted(() => {
+    // Small delay to ensure DOM is fully ready
+    setTimeout(() => {
+      updateTheme()
+      checkDarkMode()
+    }, 0)
+  })
 
   const toggleTheme = () => {
     if (theme.value === 'dark') {
