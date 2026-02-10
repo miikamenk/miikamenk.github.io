@@ -409,15 +409,19 @@ function setViewName(el: Element | null, name: string | null) {
   cursor: pointer;
   font-size: 0.9rem;
   color: var(--color-text);
-  transition: all 0.2s;
+  transition: all 0.2s var(--ease-smooth);
+  box-shadow: var(--shadow-sm);
 }
 
 .sort-btn:hover {
-  background: var(--color-border, #ccc);
+  background: var(--accent-light);
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  box-shadow: var(--shadow-md);
 }
 
 .icon-arrow {
-  transition: transform 0.3s ease;
+  transition: transform 0.3s var(--ease-smooth);
 }
 
 .rotated {
@@ -431,14 +435,16 @@ function setViewName(el: Element | null, name: string | null) {
   align-items: center;
   background: var(--color-background-soft);
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: all 0.3s var(--ease-smooth);
+  border: 1px solid var(--color-border);
 }
 
 .project-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--accent-color);
 }
 
 .project-card img {
@@ -455,6 +461,11 @@ function setViewName(el: Element | null, name: string | null) {
   width: fit-content;
   margin: 0 auto;
   text-align: center;
+}
+
+.project-card:hover h3 {
+  color: var(--accent-color);
+  font-weight: 500;
 }
 
 .modal {
@@ -474,8 +485,9 @@ function setViewName(el: Element | null, name: string | null) {
   margin: 1rem auto;
   padding: 1.5rem;
   border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-xl);
   position: relative;
+  border: 1px solid var(--color-border);
 }
 
 @media (min-width: 768px) {
@@ -519,7 +531,7 @@ function setViewName(el: Element | null, name: string | null) {
 }
 
 .close-btn {
-  position: fixed;
+  position: absolute;
   top: 1rem;
   right: 1rem;
   z-index: 2005;
@@ -528,7 +540,7 @@ function setViewName(el: Element | null, name: string | null) {
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -536,6 +548,14 @@ function setViewName(el: Element | null, name: string | null) {
   font-size: 1.2rem;
   color: #333;
   transform: none;
+  transition: all 0.2s var(--ease-smooth);
+}
+
+.close-btn:hover {
+  background: var(--accent-color);
+  color: white;
+  transform: scale(1.1);
+  box-shadow: var(--shadow-lg);
 }
 
 @media (min-width: 768px) {
@@ -551,7 +571,8 @@ function setViewName(el: Element | null, name: string | null) {
 <style>
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 0.5s; /* Smooth speed */
+  animation-duration: 0.6s;
+  animation-timing-function: var(--ease-smooth);
 }
 
 ::view-transition-group(*),
@@ -643,19 +664,21 @@ h3 {
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
   color: #333;
-  transition: all 0.2s ease;
+  transition: all 0.2s var(--ease-smooth);
 }
 
 .zoom-btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 1);
+  background: var(--accent-color);
+  color: white;
   transform: scale(1.1);
+  box-shadow: var(--shadow-lg);
 }
 
 .zoom-btn:disabled {

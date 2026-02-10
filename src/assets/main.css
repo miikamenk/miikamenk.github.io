@@ -5,6 +5,7 @@
   display: grid;
   grid-template-columns: 1fr;
   padding: 0 1rem;
+  transition: opacity 0.3s var(--ease-smooth);
 }
 
 @media (min-width: 768px) {
@@ -25,9 +26,16 @@
 a,
 .green {
   text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
+  color: var(--accent-color);
+  transition: all 0.3s var(--ease-smooth);
   padding: 3px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+a:hover {
+  color: var(--accent-hover);
+  background: var(--accent-light);
 }
 
 /* better mobile/accessibility styling */
@@ -53,6 +61,7 @@ button:focus-visible,
 a:focus-visible,
 input:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid var(--color-border-hover);
+  outline: 2px solid var(--accent-color);
   outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--accent-light);
 }

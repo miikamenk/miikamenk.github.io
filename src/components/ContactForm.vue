@@ -152,7 +152,8 @@ async function onSubmit() {
   background: var(--color-background-soft, #0b0b0b);
   padding: 1.5rem;
   border-radius: 1rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--color-border);
 }
 
 .grid-fields {
@@ -206,8 +207,8 @@ textarea {
 input:focus,
 textarea:focus {
   outline: none;
-  border-color: #55b4ff;
-  box-shadow: 0 0 0 2px rgba(85, 180, 255, 0.2);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px var(--accent-light);
 }
 
 input.error,
@@ -235,34 +236,54 @@ small {
   color: #ef4444;
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid #ef4444;
+  animation: slideIn 0.3s var(--ease-smooth);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 button {
   padding: 1rem 1.5rem;
   border-radius: 0.5rem;
   border: none;
-  background: #007bff;
+  background: var(--accent-color);
   color: white;
   cursor: pointer;
   font-weight: 700;
   font-size: 1rem;
-  transition:
-    background-color 0.2s,
-    opacity 0.2s;
+  transition: all 0.3s var(--ease-smooth);
   justify-self: start;
   min-height: 48px;
   min-width: 120px;
+  box-shadow: var(--shadow-sm);
 }
 
 button:hover:not([disabled]) {
-  background: #0056b3;
+  background: var(--accent-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+button:active:not([disabled]) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
 }
 
 button[disabled] {
   opacity: 0.6;
   cursor: not-allowed;
-  background: #1f2937;
-  color: #e5e7eb;
+  background: var(--color-text);
+  color: var(--color-background);
+  transform: none;
+  box-shadow: none;
 }
 
 .hp {

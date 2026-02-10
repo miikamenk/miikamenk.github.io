@@ -64,7 +64,11 @@ const currentLocale = computed(() => locale.value)
   </header>
 
   <div class="content">
-    <RouterView />
+    <RouterView v-slot="{ Component, route }">
+      <transition name="page" mode="out-in" appear>
+        <component :is="Component" :key="route.path" />
+      </transition>
+    </RouterView>
   </div>
 </template>
 
@@ -76,7 +80,7 @@ header {
   left: 0;
   background: var(--color-background);
   z-index: 1000;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 .content {
@@ -146,7 +150,12 @@ header {
   font-size: 1.05rem;
   padding: 0.25rem 0.5rem;
   position: relative;
-  transition: color 0.2s ease;
+  transition: color 0.2s var(--ease-smooth);
+}
+
+.desktop-nav a:hover {
+  color: var(--accent-hover);
+  font-weight: 600;
 }
 
 .desktop-nav a::after {
@@ -156,13 +165,18 @@ header {
   left: 0;
   height: 2px;
   width: 0%;
-  background: var(--color-text);
-  transition: width 0.25s ease;
+  background: var(--accent-color);
+  transition: width 0.25s var(--ease-smooth);
 }
 
 .desktop-nav a:hover::after,
 .desktop-nav a.router-link-exact-active::after {
   width: 100%;
+}
+
+.desktop-nav a.router-link-exact-active {
+  color: var(--accent-color);
+  font-weight: 600;
 }
 
 .mobile-nav {
@@ -178,13 +192,15 @@ header {
   color: var(--color-text);
   padding: 0.75rem;
   border-radius: 8px;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s var(--ease-smooth);
   min-width: 44px;
   min-height: 44px;
 }
 
 .menu-button:hover {
-  background-color: var(--color-border-hover);
+  background-color: var(--accent-light);
+  color: var(--accent-color);
+  font-weight: 600;
 }
 
 .dropdown-menu {
@@ -192,14 +208,15 @@ header {
   top: 110%;
   right: 0;
   background: var(--color-background);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-lg);
   border-radius: 8px;
   padding: 0.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
   min-width: 160px;
-  animation: fadeIn 0.2s ease;
+  animation: fadeIn 0.3s var(--ease-smooth);
+  border: 1px solid var(--color-border);
 }
 
 .dropdown-menu a {
@@ -207,16 +224,22 @@ header {
   color: var(--color-text);
   padding: 0.75rem 1rem;
   border-radius: 6px;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s var(--ease-smooth);
   font-size: 1rem;
   min-height: 44px;
   display: flex;
   align-items: center;
 }
 
-.dropdown-menu a:hover,
+.dropdown-menu a:hover {
+  background-color: var(--accent-light);
+  color: var(--accent-color);
+}
+
 .dropdown-menu a.router-link-exact-active {
-  background-color: var(--color-border-hover);
+  background-color: var(--accent-medium);
+  color: var(--accent-color);
+  font-weight: 600;
 }
 
 @media (max-width: 768px) {
@@ -249,11 +272,11 @@ header {
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(-5px);
+    transform: translateY(-8px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 </style>
