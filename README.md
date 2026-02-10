@@ -7,6 +7,6 @@
 - [x] fix contact form styling
 - [ ] make the home screen look better and do something with mobile vim emulator
 - [ ] fix mobile image pan
-- [ ] fix menkmenk logo text styling
+- [x] fix menkmenk logo text styling
 - [ ] fix default dark theme mode
 - [ ] fix render/edit button placement

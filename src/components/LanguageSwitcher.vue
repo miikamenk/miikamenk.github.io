@@ -95,10 +95,10 @@ onMounted(() => {
   font-size: 1.2rem;
   color: var(--color-text);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s var(--ease-smooth);
   min-height: 44px;
   font-family: inherit;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23777777' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-position: right 0.25rem center;
   background-repeat: no-repeat;
   background-size: 1rem;
@@ -124,6 +124,10 @@ onMounted(() => {
 /* Remove default arrow in Firefox */
 .lang-select {
   -moz-appearance: none;
+}
+
+[data-theme='dark'] .lang-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23CCCCCC' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
 }
 
 @media (max-width: 767px) {
