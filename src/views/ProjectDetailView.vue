@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { Buffer } from 'buffer'
-;(globalThis as unknown as { Buffer: typeof Buffer }).Buffer = Buffer
-
 import { ref, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import matter from 'gray-matter'
 import { marked } from 'marked'
-import { useI18n } from 'vue-i18n'
-import { useRoute, useRouter } from 'vue-router'
+import { Buffer } from 'buffer'
+;(globalThis as unknown as { Buffer: typeof Buffer }).Buffer = Buffer
 
 const { t } = useI18n()
 const route = useRoute()
@@ -70,7 +69,6 @@ const projects = ref<Project[]>(
       id: filenameFromPath(filePath),
       title: title,
       slug: createSlug(title),
-      // CHANGE: Don't default to fallbackSvg here, leave it empty if missing
       thumbnail: thumbnailUrl,
       text: html,
       uploadDate: meta.uploadDate ?? meta.date ?? '',
@@ -78,15 +76,6 @@ const projects = ref<Project[]>(
   }),
 )
 
-const sortOrder = ref<'newest' | 'oldest'>('newest')
-
-const sortedProjects = computed(() => {
-  return [...projects.value].sort((a, b) => {
-    const dateA = new Date(a.uploadDate).getTime() || 0
-    const dateB = new Date(b.uploadDate).getTime() || 0
-    return sortOrder.value === 'newest' ? dateB - dateA : dateA - dateB
-  })
-})
 const selectedProject = ref<Project | null>(null)
 const fullscreenImage = ref<string | null>(null)
 
@@ -102,15 +91,20 @@ const touchStartPos = ref({ x: 0, y: 0 })
 const isTouchPanning = ref(false)
 const initialTouchDistance = ref(0)
 
-function openProject(project: Project) {
-  if (!project) return
+onMounted(() => {
+  const slug = route.params.slug as string
+  if (slug) {
+    const project = projects.value.find((p) => p.slug === slug)
+    if (project) {
+      selectedProject.value = project
+    } else {
+      // Project not found, redirect to projects page
+      router.push({ name: 'projects' })
+    }
+  }
+})
 
-  // Navigate to slug-based URL instead of opening modal
-  router.push({ name: 'project-detail', params: { slug: project.slug } })
-}
-
-function closeProject() {
-  // Navigate back to projects grid
+function goBack() {
   router.push({ name: 'projects' })
 }
 
@@ -239,90 +233,43 @@ function handleZoom(e: WheelEvent) {
     zoomOut()
   }
 }
-
-// Check for slug in URL on mount and load project if present
-onMounted(() => {
-  const slug = route.params.slug as string
-  if (slug) {
-    const project = projects.value.find((p) => p.slug === slug)
-    if (project) {
-      selectedProject.value = project
-    }
-  }
-})
 </script>
 
 <template>
-  <section class="projects">
-    <div class="projects-header">
-      <button class="sort-btn" @click="sortOrder = sortOrder === 'newest' ? 'oldest' : 'newest'">
-        <span>{{ sortOrder === 'newest' ? t('projects.newest') : t('projects.oldest') }}</span>
+  <section class="project-detail">
+    <div v-if="selectedProject" class="container">
+      <button class="back-btn" @click="goBack">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
+          width="20"
+          height="20"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
           stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
-          :class="{ rotated: sortOrder === 'oldest' }"
-          class="icon-arrow"
         >
-          <path d="M12 5v14" />
-          <path d="m19 12-7 7-7-7" />
+          <path d="M19 12H5M12 19l-7-7 7-7" />
         </svg>
-      </button>
-    </div>
-
-    <div class="grid">
-      <div
-        v-for="project in sortedProjects"
-        :key="project.id"
-        class="project-card"
-        @click="() => openProject(project)"
-        :data-project-card="project.id"
-        role="button"
-        tabindex="0"
-        @keydown.enter="() => openProject(project)"
-      >
-        <img
-          :src="project.thumbnail || getFallbackSvg()"
-          :alt="project.title"
-          @error="(e) => ((e.target as HTMLImageElement).src = getFallbackSvg())"
-        />
-        <h3>{{ project.title }}</h3>
-      </div>
-    </div>
-
-    <div v-if="selectedProject" class="modal">
-      <button
-        class="close-btn"
-        v-if="!fullscreenImage"
-        @click="closeProject"
-        style="view-transition-name: close-button"
-      >
-        ✕
+        {{ t('projects.back') }}
       </button>
 
-      <div class="modal-content" :style="{ viewTransitionName: `card-bg-${selectedProject!.id}` }">
-        <h2 :style="{ viewTransitionName: `title-${selectedProject!.id}` }">
-          {{ selectedProject!.title }}
-        </h2>
+      <article class="project-content">
+        <h1>{{ selectedProject.title }}</h1>
 
-        <p class="date">{{ t('projects.uploaded') }} {{ selectedProject!.uploadDate }}</p>
+        <p class="date">{{ t('projects.uploaded') }} {{ selectedProject.uploadDate }}</p>
 
         <img
-          v-if="selectedProject!.thumbnail && selectedProject!.thumbnail !== getFallbackSvg()"
-          class="modal-img"
-          :src="selectedProject!.thumbnail"
-          :style="{ viewTransitionName: `thumb-${selectedProject!.id}` }"
-          @click="openFullscreenImage(selectedProject!.thumbnail)"
+          v-if="selectedProject.thumbnail && selectedProject.thumbnail !== getFallbackSvg()"
+          class="project-img"
+          :src="selectedProject.thumbnail"
+          :alt="selectedProject.title"
+          @click="openFullscreenImage(selectedProject.thumbnail)"
         />
 
-        <p class="text" v-html="selectedProject!.text"></p>
-      </div>
+        <div class="text" v-html="selectedProject.text"></div>
+      </article>
 
       <div
         v-if="fullscreenImage"
@@ -363,20 +310,37 @@ onMounted(() => {
         </div>
       </div>
     </div>
+
+    <div v-else class="not-found">
+      <h2>{{ t('projects.notFound') }}</h2>
+      <button class="back-btn" @click="goBack">
+        {{ t('projects.back') }}
+      </button>
+    </div>
   </section>
 </template>
 
 <style scoped>
-.projects {
+.project-detail {
   width: 100%;
   max-width: 100%;
   margin: 0 auto;
-  padding: 2rem;
+  padding-top: 40px; /* Less than header height - button will be in overlap zone */
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-bottom: 2rem;
   box-sizing: border-box;
+  min-height: 100vh;
 }
 
-.sort-btn {
-  display: flex;
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding-top: 100px; /* Additional spacing to push content below header */
+}
+
+.back-btn {
+  display: inline-flex;
   align-items: center;
   gap: 8px;
   background: var(--color-background-soft);
@@ -386,233 +350,125 @@ onMounted(() => {
   cursor: pointer;
   font-size: 0.9rem;
   color: var(--color-text);
-  transition: all 0.2s;
-  min-height: 44px;
-  min-width: 120px;
-}
-
-.projects-header {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.section-title {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 0;
-  text-align: left;
-}
-
-.grid {
-  display: grid;
-  gap: 1.5rem;
-  width: 100%;
-  box-sizing: border-box;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-}
-
-@media (min-width: 769px) {
-  .grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  }
-}
-
-@media (max-width: 768px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.sort-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--color-background-soft);
-  border: 1px solid var(--color-border, #ddd);
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  color: var(--color-text);
   transition: all 0.2s var(--ease-smooth);
-  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+  margin-bottom: 1rem; /* Closer to content */
+  position: relative;
 }
 
-.sort-btn:hover {
+.back-btn:hover {
   background: var(--accent-light);
   border-color: var(--accent-color);
   color: var(--accent-color);
-  box-shadow: var(--shadow-md);
 }
 
-.icon-arrow {
-  transition: transform 0.3s var(--ease-smooth);
-}
-
-.rotated {
-  transform: rotate(180deg);
-}
-
-.project-card {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: var(--color-background-soft);
-  border-radius: 12px;
-  box-shadow: var(--shadow-md);
-  cursor: pointer;
-  transition: all 0.3s var(--ease-smooth);
-  border: 1px solid var(--color-border);
-}
-
-.project-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--accent-color);
-}
-
-.project-card img {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
-}
-
-.project-card h3 {
-  padding: 0.75rem;
-  font-size: 1.2rem;
-  width: fit-content;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.project-card:hover h3 {
-  color: var(--accent-color);
-  font-weight: 500;
-}
-
-.modal {
-  position: fixed;
-  inset: 0;
-  z-index: 2000;
-  overflow-y: auto;
-  padding: 1rem 0.5rem;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(5px);
-}
-
-.modal-content {
+.project-content {
   background: var(--color-background);
-  width: 100%;
-  max-width: 800px;
-  margin: 1rem auto;
-  padding: 1.5rem;
   border-radius: 16px;
   box-shadow: var(--shadow-xl);
-  position: relative;
+  padding: 2.5rem;
   border: 1px solid var(--color-border);
 }
 
-@media (min-width: 768px) {
-  .modal {
-    padding: 2rem 1rem;
-  }
-
-  .modal-content {
-    margin: 2rem auto;
-    padding: 2.5rem;
-  }
-}
-
-.modal-content h2 {
-  font-size: 2rem;
+.project-content h1 {
+  font-size: 2.5rem;
   line-height: 1.2;
   margin: 0 0 1rem 0;
-  width: fit-content;
-}
-
-.modal-img {
-  width: auto;
-  max-width: 100%;
-  max-height: 70vh;
-  display: block;
-  margin: 1.5rem 0;
-  border-radius: 8px;
-  object-fit: contain;
-  cursor: pointer;
+  color: var(--color-heading);
 }
 
 .date {
   font-size: 0.9rem;
   color: var(--color-text-secondary, #666);
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+
+.project-img {
+  width: auto;
+  max-width: 100%;
+  max-height: 70vh;
+  display: block;
+  margin: 2rem 0;
+  border-radius: 8px;
+  object-fit: contain;
 }
 
 .text {
-  font-size: 1rem;
-  line-height: 1.5;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--color-text);
 }
 
-.close-btn {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  z-index: 2005;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: var(--shadow-md);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  color: #333;
-  transform: none;
-  transition: all 0.2s var(--ease-smooth);
+.text :deep(h2) {
+  font-size: 1.8rem;
+  margin: 2rem 0 1rem 0;
+  color: var(--color-heading);
 }
 
-.close-btn:hover {
-  background: var(--accent-color);
-  color: white;
-  transform: scale(1.1);
-  box-shadow: var(--shadow-lg);
+.text :deep(h3) {
+  font-size: 1.4rem;
+  margin: 1.5rem 0 0.75rem 0;
+  color: var(--color-heading);
 }
 
-@media (min-width: 768px) {
-  .close-btn {
-    top: 2rem;
-    right: 2rem;
-    width: 40px;
-    height: 40px;
+.text :deep(p) {
+  margin: 1rem 0;
+}
+
+.text :deep(ul),
+.text :deep(ol) {
+  margin: 1rem 0;
+  padding-left: 2rem;
+}
+
+.text :deep(li) {
+  margin: 0.5rem 0;
+}
+
+.text :deep(a) {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+.text :deep(a:hover) {
+  text-decoration: underline;
+}
+
+.not-found {
+  text-align: center;
+  max-width: 600px;
+  margin: 4rem auto;
+}
+
+.not-found h2 {
+  font-size: 2rem;
+  color: var(--color-text);
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .project-detail {
+    padding-top: 20px; /* Less than mobile header height */
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-bottom: 1rem;
   }
-}
-</style>
 
-<style>
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: 0.6s;
-  animation-timing-function: var(--ease-smooth);
-}
+  .container {
+    padding-top: 50px; /* Additional spacing for mobile */
+  }
 
-::view-transition-group(*),
-::view-transition-old(*),
-::view-transition-new(*) {
-  mix-blend-mode: normal;
-}
+  .project-content {
+    padding: 1.5rem;
+  }
 
-h2,
-h3 {
-  width: fit-content;
+  .project-content h1 {
+    font-size: 2rem;
+  }
+
+  .text {
+    font-size: 1rem;
+  }
 }
 
 .fullscreen-viewer {
@@ -622,7 +478,7 @@ h3 {
   width: 100vw;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.9); /* Dark, slightly transparent background */
-  z-index: 1000; /* Ensure it's above everything, including the project modal */
+  z-index: 3000; /* Ensure it's above everything, including the header */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -650,31 +506,6 @@ h3 {
   user-select: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
-}
-
-@media (max-width: 768px) {
-  .zoom-controls {
-    bottom: 1.5rem;
-    right: 1rem;
-    gap: 0.5rem;
-    padding: 0.5rem;
-  }
-
-  .zoom-btn {
-    width: 44px;
-    height: 44px;
-    font-size: 1rem;
-    touch-action: manipulation;
-  }
-
-  .fs-close-btn {
-    top: 1rem;
-    right: 1rem;
-    width: 44px;
-    height: 44px;
-    font-size: 1rem;
-    touch-action: manipulation;
-  }
 }
 
 .zoom-controls {
@@ -749,19 +580,44 @@ h3 {
   touch-action: manipulation;
 }
 
-.close-btn:hover,
-.close-btn:active {
+.fs-close-btn:hover {
+  opacity: 1;
+}
+
+.fs-close-btn:hover,
+.fs-close-btn:active {
   background: var(--accent-color);
   color: white;
   transform: scale(1.1);
   box-shadow: var(--shadow-lg);
 }
 
-.close-btn:active {
+.fs-close-btn:active {
   transform: scale(0.95);
 }
 
-.fs-close-btn:hover {
-  opacity: 1;
+@media (max-width: 768px) {
+  .zoom-controls {
+    bottom: 1.5rem;
+    right: 1rem;
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+
+  .zoom-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 1rem;
+    touch-action: manipulation;
+  }
+
+  .fs-close-btn {
+    top: 1rem;
+    right: 1rem;
+    width: 44px;
+    height: 44px;
+    font-size: 1rem;
+    touch-action: manipulation;
+  }
 }
 </style>

@@ -13,7 +13,9 @@
     "oldest": "Oldest",
     "uploaded": "Uploaded:",
     "noImage": "No image available",
-    "reset": "Reset"
+    "reset": "Reset",
+    "back": "Back to projects",
+    "notFound": "Project not found"
   },
   "contact": {
     "name": "Name",

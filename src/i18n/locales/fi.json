@@ -11,9 +11,11 @@
   "projects": {
     "newest": "Uusin",
     "oldest": "Vanhin",
-    "uploaded": "Ladattu:",
+    "uploaded": "Tehty:",
     "noImage": "Kuvaa ei ole saatavilla",
-    "reset": "Resetoi"
+    "reset": "Resetoi",
+    "back": "Takaisin projekteihin",
+    "notFound": "Projektia ei löytynyt"
   },
   "contact": {
     "name": "Nimi",

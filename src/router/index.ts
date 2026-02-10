@@ -32,6 +32,11 @@ const router = createRouter({
           name: 'about',
           component: () => import('../views/AboutView.vue'),
         },
+        {
+          path: 'projects/:slug',
+          name: 'project-detail',
+          component: () => import('../views/ProjectDetailView.vue'),
+        },
       ],
     },
     // Fallback routes without locale (redirect to default locale)
