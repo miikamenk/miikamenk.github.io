@@ -10,4 +10,4 @@
 - [x] fix menkmenk logo text styling
 - [x] fix default dark theme mode
 - [ ] fix render/edit button placement
-- [ ] make all projects have a specific custom URL for history and sharing.
+- [x] make all projects have a specific custom URL for history and sharing.
