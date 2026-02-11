@@ -1,27 +1,32 @@
 <script setup>
 import { onMounted, onBeforeUnmount, ref, computed, nextTick, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
-const MESSAGE = `<div class="card">
+const { t } = useI18n()
 
-# Hi, I'm miikamenk
+const MESSAGE = computed(
+  () => `<div class="card">
 
-### Full-Stack Software Developer | Based in Finland
+# ${t('vimEmulator.title')}
 
-<br/>
-
-I specialize in building applications with a passion for bleeding-edge tooling, Linux, and Vim.
-
-<br/>
-
-Outside of software, I'm an avid maker and enthusiast of custom electronics. My personal projects frequently involve:
-
-* **Hardware Design:** Custom mechanical keyboards and audio gear.
-* **Open Source:** Designing useful programs and tackling fun engineering challenges.
-* **Tooling:** Deep expertise in Linux, Vim, and development workflow optimization.
+### ${t('vimEmulator.subtitle')}
 
 <br/>
 
-Try out this interactive Vim terminal I built and explore the rest of my site!
+${t('vimEmulator.intro')}
+
+<br/>
+
+${t('vimEmulator.tryTerminal')}
+
+<br/>
+
+${t('vimEmulator.hobbiesIntro')}
+
+* **${t('vimEmulator.skills.hardware')}**
+* **${t('vimEmulator.skills.opensource')}**
+* **${t('vimEmulator.skills.tooling')}**
+
 
 <div class="social-buttons">
   <a href="https://github.com/miikamenk" target="_blank" aria-label="GitHub">
@@ -83,12 +88,13 @@ Try out this interactive Vim terminal I built and explore the rest of my site!
   to { opacity: 1; transform: translateY(0); }
 }
 </style>
-`
+`,
+)
 const TYPE_DELAY = 40 // ms/char
 const PLACEHOLDER_LINES = 0 // leading tildes like Vim
 
 // state controls
-const text = ref(MESSAGE) // visible buffer
+const text = ref(MESSAGE.value) // visible buffer
 const buffer = ref(null)
 const cursor = ref(0) // index in text
 const typingDone = ref(true)
@@ -115,15 +121,16 @@ const statusText = computed(() => {
   return 'NORMAL'
 })
 
-// typing animation bullshit
-function startTyping() {
-  let i = 0
-  timer = setInterval(() => {
-    if (i >= MESSAGE.length) return stopTyping(true)
-    insertChars(MESSAGE[i++])
-    moveCursorTo(text.value.length)
-  }, TYPE_DELAY)
-}
+// typing animation bullshit (no longer used since we default to rendered mode)
+// function startTyping() {
+//   const message = MESSAGE.value
+//   let i = 0
+//   timer = setInterval(() => {
+//     if (i >= message.length) return stopTyping(true)
+//     insertChars(message[i++])
+//     moveCursorTo(text.value.length)
+//   }, TYPE_DELAY)
+// }
 
 function stopTyping(done = false) {
   if (timer) {
@@ -135,7 +142,7 @@ function stopTyping(done = false) {
 
 function skipTyping() {
   if (typingDone.value) return
-  text.value = MESSAGE
+  text.value = MESSAGE.value
   typingDone.value = true
   stopTyping()
   moveCursorTo(text.value.length)
@@ -424,15 +431,19 @@ onBeforeUnmount(() => {
     <div class="hint">
       <div class="hint-controls">
         <p>
-          Movement: <kbd>h</kbd><kbd>j</kbd><kbd>k</kbd><kbd>l</kbd> | <kbd>d d</kbd> (delete line)
-          | <kbd>d i w</kbd> (delete inner word) | <kbd>x</kbd> (delete char)
+          {{ t('vimEmulator.guide.movement') }}: <kbd>h</kbd><kbd>j</kbd><kbd>k</kbd><kbd>l</kbd> |
+          <kbd>d d</kbd> {{ t('vimEmulator.guide.deleteLine') }} | <kbd>d i w</kbd>
+          {{ t('vimEmulator.guide.diw') }} | <kbd>x</kbd> {{ t('vimEmulator.guide.delChar') }}
         </p>
         <p>
-          Edit: <kbd>i</kbd>/<kbd>I</kbd> (insert / start of line) | <kbd>a</kbd> (append) |
-          <kbd>Esc</kbd> to exit insert | <kbd>Backspace</kbd> deletes | <kbd>Enter</kbd> new line.
+          {{ t('vimEmulator.guide.edit') }}: <kbd>i</kbd>/<kbd>I</kbd>
+          {{ t('vimEmulator.guide.insert') }} | <kbd>a</kbd> {{ t('vimEmulator.guide.append') }} |
+          <kbd>Esc</kbd> {{ t('vimEmulator.guide.exit') }} | <kbd>Backspace</kbd>
+          {{ t('vimEmulator.guide.deletes') }} | <kbd>Enter</kbd>
+          {{ t('vimEmulator.guide.newLine') }}.
         </p>
       </div>
-      <router-link to="/projects" class="btn">View Projects</router-link>
+      <router-link to="/projects" class="btn">{{ t('vimEmulator.viewProjects') }}</router-link>
     </div>
   </section>
 </template>

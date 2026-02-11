@@ -46,5 +46,31 @@
   },
   "language": {
     "switch": "切换语言"
+  },
+  "vimEmulator": {
+    "title": "嗨，我是 miikamenk",
+    "subtitle": "全栈软件开发者 | 常驻芬兰",
+    "intro": "我专注于构建应用程序，对尖端工具、Linux 和 Vim 充满热情。",
+    "hobbiesIntro": "在软件之外，我是一个热情的创客和定制电子爱好者。我的个人项目经常涉及：",
+    "tryTerminal": "试试我构建的这个交互式 Vim 终端，探索我网站的其余部分！",
+    "skills": {
+      "hardware": "硬件设计：定制机械键盘和音频设备。",
+      "opensource": "开源：设计有用的程序和解决有趣的工程挑战。",
+      "tooling": "工具：在 Linux、Vim 和开发工作流优化方面有深厚专业知识。"
+    },
+    "keyboardWarning": "编辑模式需要物理键盘才能正常工作。",
+    "viewProjects": "查看项目",
+    "guide": {
+      "movement": "移动",
+      "deleteLine": "（删除整行）",
+      "diw": "（删除行内内容）",
+      "delChar": "（删除字符）",
+      "edit": "编辑",
+      "insert": "（插入 / 光标处开始）",
+      "append": "（追加）",
+      "exit": "退出插入模式",
+      "deletes": "删除",
+      "newLine": "新建一行"
+    }
   }
 }

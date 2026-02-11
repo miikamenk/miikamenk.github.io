@@ -33,23 +33,38 @@
     "success": "Kiitos! Viestisi on lähetetty.",
     "error": "Jotain meni pieleen. Yritä uudelleen."
   },
-  "about": {
-    "title": "miikamenk",
-    "subtitle": "Itseoppinut ohjelmistokehittäjä",
-    "aboutMe": "Minusta",
-    "items": [
-      "On kirjoittanut ohjelmistoja yli vuosikymmenen ajan",
-      "Elektroniikkasuunnittelun ja mukautettujen näppäimistöiden harrastaja",
-      "Avoimen lähdekoodin puolestapuhuja",
-      "Vim-rakastaja"
-    ]
-  },
   "theme": {
-    "toggle": "Vaihda tummaa tilaa",
-    "light": "Vaalea tila",
-    "dark": "Tumma tila"
+    "toggle": "Vaihda teemaa",
+    "light": "Vaalea teema",
+    "dark": "Tumma teema"
   },
   "language": {
-    "switch": "Vaihda kieli"
+    "switch": "Vaihda kieltä"
+  },
+  "vimEmulator": {
+    "title": "Hei, olen miikamenk",
+    "subtitle": "Full-Stack ohjelmistokehittäjä | Suomessa toimiva",
+    "intro": "Erikoistun sovellusten, sekä sulatettujen laitteiden koodaukseen. Intohimona oppia uutta, Linux ja Vim.",
+    "hobbiesIntro": "Ohjelmoinnin ulkopuolella olen elektroniikan rakentaja ja suunnittelija. Henkilökohtaiset projektini sisältävät usein:",
+    "tryTerminal": "Kokeile tätä interaktiivista Vim-emulaattoria ja tutustu sivustoni muuhun sisältöön!",
+    "skills": {
+      "hardware": "Laitteistosuunnittelu: mekaaniset näppäimistöt ja äänilaitteet.",
+      "opensource": "Avoin lähdekoodi: Hyödyllisten ohjelmien suunnittelu ja hauskojen insinöörihaasteiden ratkaiseminen.",
+      "tooling": "Työkalut: Syvä osaaminen Linuxista, VIM:stä ja kehitystyön optimoinnissa."
+    },
+    "keyboardWarning": "Muokkaustila vaatii fyysisen näppäimistön toimiakseen oikein.",
+    "viewProjects": "Näytä projektit",
+    "guide": {
+      "movement": "Liikkuminen",
+      "deleteLine": "(poista rivi)",
+      "diw": "(poista sisäinen sana)",
+      "delChar": "(poista kirjain)",
+      "edit": "muokkaa",
+      "insert": "(insert / kursorin alkuun)",
+      "append": "(appendoi)",
+      "exit": "poistu editointi moodista",
+      "deletes": "poista",
+      "newLine": "uusi rivi"
+    }
   }
 }

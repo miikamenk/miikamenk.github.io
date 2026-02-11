@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import DOMPurify from 'dompurify'
 import { marked } from 'marked'
 import VimEmulator from '../components/VimEmulator.vue'
@@ -8,6 +8,7 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 const vimRef = ref<InstanceType<typeof VimEmulator> | null>(null)
 const renderedHtml = ref<string | null>(null)
+const showKeyboardWarning = ref(false)
 
 async function onRender() {
   // Get the raw content (Markdown + embedded <style>) from the child
@@ -20,15 +21,50 @@ async function onRender() {
   renderedHtml.value = DOMPurify.sanitize(rawHtml)
 }
 
+// Auto-render on mount
+onMounted(async () => {
+  await nextTick()
+  setTimeout(async () => {
+    if (vimRef.value) {
+      await onRender()
+    }
+  }, 100)
+})
+
+// Mobile detection using user agent
+function isMobileDevice() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+}
+
 // Go back to emulator view
 function onEdit() {
   renderedHtml.value = null
+
+  // Show keyboard warning on mobile
+  if (isMobileDevice()) {
+    showKeyboardWarning.value = true
+    setTimeout(() => {
+      showKeyboardWarning.value = false
+    }, 4000)
+  }
 }
 </script>
 
 <template>
   <div class="home">
     <div class="terminal-wrapper">
+      <!-- Mobile keyboard warning -->
+      <div v-if="showKeyboardWarning" class="keyboard-warning" role="alert" aria-live="polite">
+        <span>{{ t('vimEmulator.keyboardWarning') }}</span>
+        <button
+          @click="showKeyboardWarning = false"
+          class="close-warning"
+          aria-label="Close warning"
+        >
+          ×
+        </button>
+      </div>
+
       <div class="vim-controls">
         <button
           class="render-btn"
@@ -92,25 +128,19 @@ function onEdit() {
 }
 
 .vim-controls {
-  position: absolute;
-  top: -2rem;
-  right: 0;
-  left: unset;
-  transform: none;
-  padding-right: 0.5rem;
-  width: auto;
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  width: 100%;
+  max-width: 1200px;
   pointer-events: auto;
-  z-index: 30;
 }
 
 @media (min-width: 768px) {
   .vim-controls {
-    top: -2.5rem;
-    padding-right: 0.75rem;
     gap: 1rem;
+    padding-right: 0.75rem;
   }
 }
 
@@ -165,5 +195,60 @@ function onEdit() {
 }
 .render-btn:active {
   transform: translateY(-1px) scale(0.995);
+}
+
+.keyboard-warning {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fbbf24;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  animation: slideInDown 0.3s ease-out;
+  position: relative;
+  z-index: 40;
+}
+
+.close-warning {
+  background: none;
+  border: none;
+  color: #92400e;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 1rem;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.close-warning:hover {
+  opacity: 1;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .keyboard-warning {
+    background: #451a03;
+    color: #fef3c7;
+    border-color: #d97706;
+  }
+
+  .close-warning {
+    color: #fef3c7;
+  }
 }
 </style>
