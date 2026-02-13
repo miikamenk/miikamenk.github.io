@@ -22,13 +22,8 @@ async function onRender() {
 }
 
 // Auto-render on mount
-onMounted(async () => {
-  await nextTick()
-  setTimeout(async () => {
-    if (vimRef.value) {
-      await onRender()
-    }
-  }, 100)
+onMounted(() => {
+  onRender()
 })
 
 // Mobile detection using user agent
