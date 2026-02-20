@@ -43,14 +43,14 @@
   },
   "vimEmulator": {
     "title": "Hei, olen miikamenk",
-    "subtitle": "Full-Stack ohjelmistokehittäjä | Suomessa toimiva",
-    "intro": "Erikoistun sovellusten, sekä sulatettujen laitteiden koodaukseen. Intohimona oppia uutta, Linux ja Vim.",
-    "hobbiesIntro": "Ohjelmoinnin ulkopuolella olen elektroniikan rakentaja ja suunnittelija. Henkilökohtaiset projektini sisältävät usein:",
+    "subtitle": "Full-Stack ohjelmistokehittäjä Suomesta",
+    "intro": "Tykkään haasteista ja olen aina innokas oppimaan uutta. Rakastan Vimiä ja Linuxia, koska voin muokata ja optimoida työkalut juuri haluamallani tavalla.",
+    "hobbiesIntro": "Ohjelmoinnin ulkopuolella olen tykkään rakentaa ja suunnittella pienoiselektroniikkaa. Omat projektit usein sisältää:",
     "tryTerminal": "Kokeile tätä interaktiivista Vim-emulaattoria ja tutustu sivustoni muuhun sisältöön!",
     "skills": {
-      "hardware": "Laitteistosuunnittelu: mekaaniset näppäimistöt ja äänilaitteet.",
+      "hardware": "Laitteistosuunnittelu: mekaaniset näppäimistöt, hifi-laitteisto ja muuta pienoiselektroniikkaa.",
       "opensource": "Avoin lähdekoodi: Hyödyllisten ohjelmien suunnittelu ja hauskojen insinöörihaasteiden ratkaiseminen.",
-      "tooling": "Työkalut: Syvä osaaminen Linuxista, VIM:stä ja kehitystyön optimoinnissa."
+      "tooling": "Työkalut: Hyvä osaaminen Linuxista, VIM:stä ja kehitystyön optimoinnissa."
     },
     "keyboardWarning": "Muokkaustila vaatii fyysisen näppäimistön toimiakseen oikein.",
     "viewProjects": "Näytä projektit",
